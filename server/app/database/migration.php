@@ -28,8 +28,9 @@ $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}authors");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}genres");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}book_author");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}book_genre");
-$builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}stock");
+$builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}payment_types");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}orders");
+$builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}order_details");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}cart");
 $builderMySQL->raw("DROP TABLE IF EXISTS {$prefix}auth_tokens");
 
@@ -44,6 +45,7 @@ $builderMySQL->raw(
                   email VARCHAR(255),
                   password VARCHAR(255),
                   role ENUM('admin', 'user') DEFAULT 'user',
+                  discount DECIMAL DEFAULT '0.00',
                   UNIQUE (email)
             )"
 );
@@ -54,6 +56,10 @@ $builderMySQL->raw(
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   title VARCHAR(255),
                   description TEXT,
+                  image_url VARCHAR(255),
+                  count INT UNSIGNED,
+                  price DECIMAL,
+                  discount DECIMAL DEFAULT '0.00',
                   UNIQUE (title)
             )"
 );
@@ -106,34 +112,49 @@ $builderMySQL->raw(
             )"
 );
 
-// Create stock table
+// Create payment_types table
 $builderMySQL->raw(
-    "CREATE TABLE {$prefix}stock (
-                  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  book_id INT UNSIGNED,
-                  count INT,
-                  price DECIMAL,
-                  FOREIGN KEY (book_id)
-                        REFERENCES {$prefix}books (id) 
-                        ON DELETE SET NULL
-            )"
+      "CREATE TABLE {$prefix}payment_types (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255)
+              )"
 );
 
 // Create orders table
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}orders (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
-                  count INT,
-                  payment_type ENUM('credit_card', 'cash'),
-                  FOREIGN KEY (book_id)
-                        REFERENCES {$prefix}books (id) 
+                  payment_types_id INT UNSIGNED,
+                  status ENUM('in_process', 'done') DEFAULT 'in_process',
+                  total_discount DECIMAL,
+                  total_price DECIMAL,
+                  FOREIGN KEY (payment_types_id)
+                        REFERENCES {$prefix}payment_types (id) 
                         ON DELETE SET NULL,
                   FOREIGN KEY (user_id)
                         REFERENCES {$prefix}users (id)
                         ON DELETE SET NULL
             )"
+);
+
+// Create order_details table
+$builderMySQL->raw(
+      "CREATE TABLE {$prefix}order_details (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    book_id INT UNSIGNED,
+                    order_id INT UNSIGNED,
+                    book_title VARCHAR(255),
+                    book_count INT UNSIGNED,
+                    book_price DECIMAL,
+                    book_discount DECIMAL DEFAULT '0.00',
+                    FOREIGN KEY (book_id)
+                          REFERENCES {$prefix}books (id) 
+                          ON DELETE SET NULL,
+                    FOREIGN KEY (order_id)
+                          REFERENCES {$prefix}orders (id)
+                          ON DELETE SET NULL
+              )"
 );
 
 // Create cart table
@@ -142,7 +163,7 @@ $builderMySQL->raw(
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
-                  count INT,
+                  count INT UNSIGNED,
                   FOREIGN KEY (book_id)
                         REFERENCES {$prefix}books (id) 
                         ON DELETE CASCADE,
