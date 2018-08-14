@@ -53,7 +53,8 @@ $builderMySQL->raw(
     "CREATE TABLE {$prefix}books (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   title VARCHAR(255),
-                  description TEXT
+                  description TEXT,
+                  UNIQUE (title)
             )"
 );
 
@@ -61,7 +62,8 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}authors (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  name VARCHAR(255)
+                  name VARCHAR(255),
+                  UNIQUE (name)
             )"
 );
 
@@ -69,7 +71,8 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}genres (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  name VARCHAR(255)
+                  name VARCHAR(255),
+                  UNIQUE (name)
             )"
 );
 
@@ -123,7 +126,6 @@ $builderMySQL->raw(
                   book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
                   count INT,
-                  price DECIMAL,
                   payment_type ENUM('credit_card', 'cash'),
                   FOREIGN KEY (book_id)
                         REFERENCES {$prefix}books (id) 
@@ -141,7 +143,6 @@ $builderMySQL->raw(
                   book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
                   count INT,
-                  price DECIMAL,
                   FOREIGN KEY (book_id)
                         REFERENCES {$prefix}books (id) 
                         ON DELETE CASCADE,
