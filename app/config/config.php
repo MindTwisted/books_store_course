@@ -19,3 +19,5 @@ const MYSQL_SETTINGS = [
 const TABLE_PREFIX = 'bs_';
 
 const DEFAULT_VIEW_TYPE = 'json'; // json, html, xml, txt
+
+const ROOT_DIR = '/var/www/html/books_store_course';
