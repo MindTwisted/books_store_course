@@ -45,7 +45,7 @@ $builderMySQL->raw(
                   email VARCHAR(255),
                   password VARCHAR(255),
                   role ENUM('admin', 'user') DEFAULT 'user',
-                  discount DECIMAL DEFAULT '0.00',
+                  discount DECIMAL(8,2) DEFAULT '0.00',
                   UNIQUE (email)
             )"
 );
@@ -57,8 +57,8 @@ $builderMySQL->raw(
                   title VARCHAR(255),
                   description TEXT,
                   image_url VARCHAR(255),
-                  price DECIMAL,
-                  discount DECIMAL DEFAULT '0.00',
+                  price DECIMAL(8,2),
+                  discount DECIMAL(8,2) DEFAULT '0.00',
                   UNIQUE (title)
             )"
 );
@@ -126,8 +126,8 @@ $builderMySQL->raw(
                   user_id INT UNSIGNED,
                   payment_types_id INT UNSIGNED,
                   status ENUM('in_process', 'done') DEFAULT 'in_process',
-                  total_discount DECIMAL,
-                  total_price DECIMAL,
+                  total_discount DECIMAL(8,2),
+                  total_price DECIMAL(8,2),
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (payment_types_id)
                         REFERENCES {$prefix}payment_types (id) 
@@ -146,8 +146,8 @@ $builderMySQL->raw(
                     order_id INT UNSIGNED,
                     book_title VARCHAR(255),
                     book_count INT UNSIGNED,
-                    book_price DECIMAL,
-                    book_discount DECIMAL DEFAULT '0.00',
+                    book_price DECIMAL(8,2),
+                    book_discount DECIMAL(8,2) DEFAULT '0.00',
                     FOREIGN KEY (book_id)
                           REFERENCES {$prefix}books (id) 
                           ON DELETE SET NULL,
