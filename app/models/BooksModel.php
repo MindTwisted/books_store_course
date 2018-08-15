@@ -2,26 +2,8 @@
 
 namespace app\models;
 
-use libs\QueryBuilder\src\QueryBuilder;
-
-class BooksModel
+class BooksModel extends Model
 {
-    protected $queryBuilder;
-    protected $dbPrefix;
-
-    public function __construct()
-    {
-        $this->queryBuilder = new QueryBuilder(
-            'mysql',
-            MYSQL_SETTINGS['host'],
-            MYSQL_SETTINGS['port'],
-            MYSQL_SETTINGS['database'],
-            MYSQL_SETTINGS['user'],
-            MYSQL_SETTINGS['password']
-        );
-        $this->dbPrefix = TABLE_PREFIX;
-    }
-
     public function getAllBooks()
     {
         $executeParams = [];
@@ -69,6 +51,48 @@ class BooksModel
         }
 
         $sqlQuery .= " GROUP BY {$this->dbPrefix}books.id";
+
+        $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
+
+        $books = $books->fetchAll(\PDO::FETCH_ASSOC);
+
+        $books = array_map(function($book) {
+            $book['authors'] = explode(',', $book['authors']);
+            $book['genres'] = explode(',', $book['genres']);
+
+            return $book;
+        }, $books);
+
+        return $books;
+    }
+
+    public function getBookById($id)
+    {
+        $executeParams = [];
+        $sqlQuery = "
+            SELECT
+                {$this->dbPrefix}books.id,
+                {$this->dbPrefix}books.title,
+                {$this->dbPrefix}books.description,
+                {$this->dbPrefix}books.image_url,
+                {$this->dbPrefix}books.price,
+                {$this->dbPrefix}books.discount,
+                GROUP_CONCAT(DISTINCT {$this->dbPrefix}authors.name) AS authors,
+                GROUP_CONCAT(DISTINCT {$this->dbPrefix}genres.name) AS genres
+            FROM {$this->dbPrefix}books
+            INNER JOIN {$this->dbPrefix}book_author 
+                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_author.book_id
+            INNER JOIN {$this->dbPrefix}authors
+                ON {$this->dbPrefix}authors.id = {$this->dbPrefix}book_author.author_id
+            INNER JOIN {$this->dbPrefix}book_genre 
+                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_genre.book_id
+            INNER JOIN {$this->dbPrefix}genres
+                ON {$this->dbPrefix}genres.id = {$this->dbPrefix}book_genre.genre_id
+            WHERE {$this->dbPrefix}books.id = ?
+            GROUP BY {$this->dbPrefix}books.id
+        ";
+        
+        $executeParams[] = $id;
 
         $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
 
