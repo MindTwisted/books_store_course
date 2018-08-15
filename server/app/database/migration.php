@@ -57,7 +57,6 @@ $builderMySQL->raw(
                   title VARCHAR(255),
                   description TEXT,
                   image_url VARCHAR(255),
-                  count INT UNSIGNED,
                   price DECIMAL,
                   discount DECIMAL DEFAULT '0.00',
                   UNIQUE (title)
@@ -129,6 +128,7 @@ $builderMySQL->raw(
                   status ENUM('in_process', 'done') DEFAULT 'in_process',
                   total_discount DECIMAL,
                   total_price DECIMAL,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (payment_types_id)
                         REFERENCES {$prefix}payment_types (id) 
                         ON DELETE SET NULL,
