@@ -35,7 +35,8 @@ $builderMySQL->table("{$prefix}authors")
             ['George Ilian'],
             ['Robert T. Kiyosaki'],
             ['George Orwell'],
-            ['Stephen King']
+            ['Stephen King'],
+            ['Robert Galbraith']
       )
       ->insert()
       ->run();
@@ -70,7 +71,10 @@ $builderMySQL->table("{$prefix}books")
 // Seed book_author table
 $builderMySQL->table("{$prefix}book_author")
       ->fields(['book_id', 'author_id'])
-      ->values([1, 1])
+      ->values(
+            [1, 1],
+            [1, 8]
+      )
       ->insert()
       ->run();
 

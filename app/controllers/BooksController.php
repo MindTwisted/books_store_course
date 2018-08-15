@@ -17,7 +17,8 @@ class BooksController
     public function index()
     {
         if (isset($_GET['author'])
-            || isset($_GET['genre']))
+            || isset($_GET['genre'])
+            || isset($_GET['search']))
         {
             $books = $this->booksModel->getFiltered($_GET);
 
