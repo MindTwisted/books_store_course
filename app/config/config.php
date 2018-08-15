@@ -17,3 +17,5 @@ const MYSQL_SETTINGS = [
 ];
 
 const TABLE_PREFIX = 'bs_';
+
+const DEFAULT_VIEW_TYPE = 'json'; // json, html, xml, txt

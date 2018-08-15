@@ -1,0 +1,9 @@
+RewriteEngine On 
+
+# RewriteBase /~user5/rest_course/client/
+# RewriteBase /books_store_course/public/
+
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^.*$ index.php
