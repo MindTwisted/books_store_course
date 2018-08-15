@@ -22,9 +22,10 @@ class BooksModel
         $this->dbPrefix = TABLE_PREFIX;
     }
 
-    public function getAll()
+    public function getAllBooks()
     {
-        $books = $this->queryBuilder->raw("
+        $executeParams = [];
+        $sqlQuery = "
             SELECT
                 {$this->dbPrefix}books.id,
                 {$this->dbPrefix}books.title,
@@ -43,26 +44,42 @@ class BooksModel
                 ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_genre.book_id
             INNER JOIN {$this->dbPrefix}genres
                 ON {$this->dbPrefix}genres.id = {$this->dbPrefix}book_genre.genre_id
-            GROUP BY {$this->dbPrefix}books.id
-        ");
+            WHERE 1=1
+        ";
+
+        if (isset($_GET['author']) 
+            && strlen($_GET['author']) > 0)
+        {
+            $sqlQuery .= " AND {$this->dbPrefix}authors.name = ?";
+            $executeParams[] = $_GET['author'];
+        }
+
+        if (isset($_GET['genre']) 
+            && strlen($_GET['genre']) > 0)
+        {
+            $sqlQuery .= " AND {$this->dbPrefix}genres.name = ?";
+            $executeParams[] = $_GET['genre'];
+        }
+
+        if (isset($_GET['title']) 
+            && strlen($_GET['title']) > 0)
+        {
+            $sqlQuery .= " AND {$this->dbPrefix}books.title LIKE ?";
+            $executeParams[] = "%{$_GET['title']}%";
+        }
+
+        $sqlQuery .= " GROUP BY {$this->dbPrefix}books.id";
+
+        $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
 
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $books;
-    }
+        $books = array_map(function($book) {
+            $book['authors'] = explode(',', $book['authors']);
+            $book['genres'] = explode(',', $book['genres']);
 
-    public function getFiltered(array $query)
-    {
-        $books = $this->queryBuilder->table("{$this->dbPrefix}books")
-            ->fields(['*']);
-
-        if (isset($query['author'])
-            && isset($query['genre']))
-        {
-            
-        }
-
-        $books = $books->select()->run();
+            return $book;
+        }, $books);
 
         return $books;
     }

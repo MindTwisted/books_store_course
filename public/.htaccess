@@ -1,6 +1,10 @@
+<Limit GET POST PUT DELETE>
+  Allow from all
+</Limit>
+
 RewriteEngine On 
 
-# RewriteBase /~user5/rest_course/client/
+RewriteBase /~user5/books-store/
 # RewriteBase /books_store_course/public/
 
 RewriteCond %{REQUEST_FILENAME} !-f 

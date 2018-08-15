@@ -2,8 +2,6 @@
 
 namespace libs;
 
-use \Exception;
-
 class Router
 {
     protected static $methods = ['GET', 'POST', 'PUT', 'DELETE'];

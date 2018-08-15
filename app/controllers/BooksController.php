@@ -16,18 +16,7 @@ class BooksController
 
     public function index()
     {
-        if (isset($_GET['author'])
-            || isset($_GET['genre'])
-            || isset($_GET['search']))
-        {
-            $books = $this->booksModel->getFiltered($_GET);
-
-            return View::render([
-                'data' => $books
-            ]);
-        }
-
-        $books = $this->booksModel->getAll();
+        $books = $this->booksModel->getAllBooks();
 
         return View::render([
             'data' => $books
