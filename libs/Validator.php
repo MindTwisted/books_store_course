@@ -18,11 +18,15 @@ class Validator
             'method' => 'checkNumeric',
             'message' => 'This field requires numeric value.',
         ],
-        "/^positiveInt$/" => [
-            'method' => 'checkPositiveInt',
-            'message' => 'This field requires numeric value greater than zero.',
+        "/^integer$/" => [
+            'method' => 'checkInteger',
+            'message' => 'This field requires integer value.',
         ],
         "/^min:([0-9]+)$/" => [
+            'method' => 'checkMin',
+            'message' => 'This field requires bigger numeric value.',
+        ],
+        "/^minLength:([0-9]+)$/" => [
             'method' => 'checkMinLength',
             'message' => 'This field requires longer string.',
         ],
@@ -61,7 +65,12 @@ class Validator
 
     private static function checkRequired($field)
     {
-        return $field && strlen($field) > 0;
+        if (empty($field) && $field !== '0' && strlen($field) === 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static function checkNumeric($field)
@@ -90,14 +99,62 @@ class Validator
         return true;
     }
 
+    private static function checkInteger($field)
+    {
+        if ($field) 
+        {
+            if (is_array($field)) 
+            {
+                $isInteger = true;
+
+                foreach ($field as $row) 
+                {
+                    if (!ctype_digit(strval($row))) 
+                    {
+                        $isInteger = false;
+                    }
+
+                }
+
+                return $isInteger;
+            }
+
+            return ctype_digit(strval($field));
+        }
+
+        return true;
+    }
+
     private static function checkEmail($field)
     {
         return $field && !!filter_var($field, FILTER_VALIDATE_EMAIL);
     }
 
-    private static function checkPositiveInt($field)
+    private static function checkMin($field, $min)
     {
-        return $field && intval($field) > 0;
+        if (empty($field) && $field !== '0')
+        {
+            return true;
+        }
+
+        if (is_array($field)) 
+        {
+            $isValid = true;
+
+            foreach ($field as $row) 
+            {
+                if (!is_numeric($row) || !(+$row >= +$min)) 
+                {
+                    $isValid = false;
+                }
+
+            }
+
+            return $isValid;
+        }
+
+        return is_numeric($field) && +$field >= +$min;
+
     }
 
     private static function checkMinLength($field, $minLength)
@@ -133,18 +190,23 @@ class Validator
 
     private static function checkExists($field, $uTable, $uField)
     {
-        if ($field)
+        if (empty($field) && $field !== '0')
+        {
+            return true;
+        }
+ 
+        $result = self::$builder->table($uTable)
+                                ->fields([$uField])
+                                ->select()
+                                ->run();
+
+        if (!is_array($field))
         {
             $isExists = false;
-            
-            $result = self::$builder->table($uTable)
-                                    ->fields(['*'])
-                                    ->select()
-                                    ->run();
 
             foreach ($result as $res) 
             {
-                if (+$res[$uField] === +$field) 
+                if ($res[$uField] == $field) 
                 {
                     $isExists = true;
                 }
@@ -153,7 +215,20 @@ class Validator
             return $isExists;
         }
 
-        return false;
+        $isExists = true;
+        $resultValues = array_map(function($res) use ($uField) {
+            return $res[$uField];
+        }, $result);
+        
+        foreach ($field as $row)
+        {
+            if (!in_array($row, $resultValues))
+            {
+                $isExists = false;
+            }
+        }
+
+        return $isExists;
     }
 
     private static function checkIncluded($field, $list)

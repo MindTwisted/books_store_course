@@ -65,9 +65,9 @@ class UsersController
         $dbPrefix = $this->usersModel->getDbPrefix();
         
         $validationErrors = Validator::validate([
-            'name' => "required|min:6",
+            'name' => "required|minLength:6",
             'email' => "required|email|unique:{$dbPrefix}users:email",
-            'password' => "required|min:6"
+            'password' => "required|minLength:6"
         ]);
 
         if (count($validationErrors) > 0)
@@ -94,7 +94,7 @@ class UsersController
         $user = Auth::check();
 
         if ('admin' !== $user['role'] 
-            && $id !== $user['id'])
+            && +$id !== +$user['id'])
         {
             return View::render([
                 'text' => "Route permission denied."
@@ -104,9 +104,9 @@ class UsersController
         $dbPrefix = $this->usersModel->getDbPrefix();
         
         $validationErrors = Validator::validate([
-            'name' => "required|min:6",
+            'name' => "required|minLength:6",
             'email' => "required|email|unique:{$dbPrefix}users:email:{$id}",
-            'password' => "required|min:6",
+            'password' => "required|minLength:6",
             'discount' => "numeric"
         ]);
 

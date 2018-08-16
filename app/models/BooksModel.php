@@ -114,4 +114,20 @@ class BooksModel extends Model
 
         return $books;
     }
+
+    public function addBook($title, $description, $price, $discount, $author, $genre)
+    {
+        $dbPrefix = $this->getDbPrefix();
+
+        $this->queryBuilder->table("{$dbPrefix}books")
+            ->fields(['title', 'description', 'price', 'discount'])
+            ->values([$title, $description, $price, $discount])
+            ->insert()
+            ->run();
+
+        /*
+            1) Если у книги нет связей - метод getAll не подтягивает её.
+            2) Доработать addBook
+        */
+    }
 }
