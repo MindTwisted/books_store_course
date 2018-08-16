@@ -45,6 +45,14 @@ class AuthorsController
     public function store()
     {
         $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+
         $dbPrefix = $this->authorsModel->getDbPrefix();
         
         $validationErrors = Validator::validate([
@@ -71,6 +79,14 @@ class AuthorsController
     public function update($id)
     {
         $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+
         $dbPrefix = $this->authorsModel->getDbPrefix();
 
         $validationErrors = Validator::validate([
@@ -106,6 +122,13 @@ class AuthorsController
     public function delete($id)
     {
         $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
 
         $author = $this->authorsModel->getAuthorById($id);
 

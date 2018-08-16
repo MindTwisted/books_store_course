@@ -14,13 +14,13 @@ class Validator
             'method' => 'checkRequired',
             'message' => 'This field is required.',
         ],
-        "/^integer$/" => [
-            'method' => 'checkInteger',
-            'message' => 'This field requires value of integer type.',
+        "/^numeric$/" => [
+            'method' => 'checkNumeric',
+            'message' => 'This field requires numeric value.',
         ],
         "/^positiveInt$/" => [
             'method' => 'checkPositiveInt',
-            'message' => 'This field requires value greater than zero.',
+            'message' => 'This field requires numeric value greater than zero.',
         ],
         "/^min:([0-9]+)$/" => [
             'method' => 'checkMinLength',
@@ -64,7 +64,7 @@ class Validator
         return $field && strlen($field) > 0;
     }
 
-    private static function checkInteger($field)
+    private static function checkNumeric($field)
     {
         if ($field) 
         {
@@ -87,7 +87,7 @@ class Validator
             return is_numeric($field);
         }
 
-        return false;
+        return true;
     }
 
     private static function checkEmail($field)

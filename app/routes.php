@@ -21,6 +21,31 @@ Router::add('auth.delete', [
     'controller' => ['app\controllers\AuthController', 'delete']
 ]);
 
+// Users routes
+Router::add('users.index', [
+    'url' => '/api/users',
+    'method' => 'GET',
+    'controller' => ['app\controllers\UsersController', 'index']
+]);
+
+Router::add('users.show', [
+    'url' => '/api/users/:id',
+    'method' => 'GET',
+    'controller' => ['app\controllers\UsersController', 'show']
+]);
+
+Router::add('users.store', [
+    'url' => '/api/users',
+    'method' => 'POST',
+    'controller' => ['app\controllers\UsersController', 'store']
+]);
+
+Router::add('users.update', [
+    'url' => '/api/users/:id',
+    'method' => 'PUT',
+    'controller' => ['app\controllers\UsersController', 'update']
+]);
+
 // Books routes
 Router::add('books.index', [
     'url' => '/api/books',
