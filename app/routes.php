@@ -15,6 +15,12 @@ Router::add('auth.store', [
     'controller' => ['app\controllers\AuthController', 'store']
 ]);
 
+Router::add('auth.delete', [
+    'url' => '/api/auth',
+    'method' => 'DELETE',
+    'controller' => ['app\controllers\AuthController', 'delete']
+]);
+
 // Books routes
 Router::add('books.index', [
     'url' => '/api/books',
@@ -75,6 +81,37 @@ Router::add('authors.delete', [
     'url' => '/api/authors/:id',
     'method' => 'DELETE',
     'controller' => ['app\controllers\AuthorsController', 'delete']
+]);
+
+// Genres routes
+Router::add('genres.index', [
+    'url' => '/api/genres',
+    'method' => 'GET',
+    'controller' => ['app\controllers\GenresController', 'index']
+]);
+
+Router::add('genres.show', [
+    'url' => '/api/genres/:id',
+    'method' => 'GET',
+    'controller' => ['app\controllers\GenresController', 'show']
+]);
+
+Router::add('genres.store', [
+    'url' => '/api/genres',
+    'method' => 'POST',
+    'controller' => ['app\controllers\GenresController', 'store']
+]);
+
+Router::add('genres.update', [
+    'url' => '/api/genres/:id',
+    'method' => 'PUT',
+    'controller' => ['app\controllers\GenresController', 'update']
+]);
+
+Router::add('genres.delete', [
+    'url' => '/api/genres/:id',
+    'method' => 'DELETE',
+    'controller' => ['app\controllers\GenresController', 'delete']
 ]);
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];

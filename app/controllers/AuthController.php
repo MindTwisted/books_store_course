@@ -70,4 +70,15 @@ class AuthController
             'text' => "The credentials you supplied were not correct."
         ], 401);  
     }
+
+    public function delete()
+    {
+        $user = Auth::check();
+
+        Auth::logout($user);
+        
+        return View::render([
+            'text' => "User {$user['name']} was successfully logged out."
+        ]);  
+    }
 }
