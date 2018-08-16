@@ -6,8 +6,8 @@ use libs\QueryBuilder\src\QueryBuilder;
 
 class Model
 {
+    private $dbPrefix;
     protected $queryBuilder;
-    protected $dbPrefix;
 
     public function __construct()
     {

@@ -6,6 +6,7 @@ use app\models\AuthorsModel;
 use libs\View;
 use libs\Auth;
 use libs\Validator;
+use libs\Input;
 
 class AuthorsController
 {
@@ -51,7 +52,7 @@ class AuthorsController
             ], 422);
         }
 
-        $name = $_POST['name'];
+        $name = Input::get('name');
 
         $this->authorsModel->addAuthor($name);
 
@@ -65,15 +66,8 @@ class AuthorsController
         $user = Auth::check();
         $dbPrefix = $this->authorsModel->getDbPrefix();
 
-        $method = $_SERVER['REQUEST_METHOD'];
-        
-        if ('PUT' === $method) {
-            parse_str(file_get_contents('php://input'), $_PUT);
-            var_dump($_PUT); //$_PUT contains put fields 
-        }
-        
         $validationErrors = Validator::validate([
-            'name' => "required|unique:{$dbPrefix}authors:name"
+            'name' => "required|unique:{$dbPrefix}authors:name:{$id}"
         ]);
 
         if (count($validationErrors) > 0)

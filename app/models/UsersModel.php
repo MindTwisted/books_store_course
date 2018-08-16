@@ -6,7 +6,9 @@ class UsersModel extends Model
 {
     public function getUserByEmail($email)
     {
-        $user = $this->queryBuilder->table("{$this->dbPrefix}users")
+        $dbPrefix = $this->getDbPrefix();
+
+        $user = $this->queryBuilder->table("{$dbPrefix}users")
             ->fields(['*'])
             ->where(['email', '=', $email])
             ->select()

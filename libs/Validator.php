@@ -3,6 +3,7 @@
 namespace libs;
 
 use libs\QueryBuilder\src\QueryBuilder;
+use libs\Input;
 
 class Validator
 {
@@ -60,23 +61,18 @@ class Validator
 
     private static function checkRequired($field)
     {
-        if (isset($_POST[$field]))
-        {
-            return strlen($_POST[$field]) > 0;
-        }
-
-        return false;
+        return $field && strlen($field) > 0;
     }
 
     private static function checkInteger($field)
     {
-        if (isset($_POST[$field])) 
+        if ($field) 
         {
-            if (is_array($_POST[$field])) 
+            if (is_array($field)) 
             {
                 $isNumeric = true;
 
-                foreach ($_POST[$field] as $row) 
+                foreach ($field as $row) 
                 {
                     if (!is_numeric($row)) 
                     {
@@ -88,7 +84,7 @@ class Validator
                 return $isNumeric;
             }
 
-            return is_numeric($_POST[$field]);
+            return is_numeric($field);
         }
 
         return false;
@@ -96,40 +92,24 @@ class Validator
 
     private static function checkEmail($field)
     {
-        if (isset($_POST[$field]))
-        {
-            return !!filter_var($_POST[$field], FILTER_VALIDATE_EMAIL);
-        }
-
-        return false;
+        return $field && !!filter_var($field, FILTER_VALIDATE_EMAIL);
     }
 
     private static function checkPositiveInt($field)
     {
-        if (isset($_POST[$field])) 
-        {
-            return intval($_POST[$field]) > 0;
-        }
-
-        return false;
+        return $field && intval($field) > 0;
     }
 
     private static function checkMinLength($field, $minLength)
     {
-        if (isset($_POST[$field])) 
-        {
-            return strlen($_POST[$field]) >= $minLength;
-        }
-
-        return false;
+        return $field && strlen($field) >= $minLength;
     }
 
     private static function checkUnique($field, $uTable, $uField, $exceptId = 0)
     {
-        if (isset($_POST[$field]))
+        if ($field)
         {
             $isUnique = true;
-            $fieldValue = $_POST[$field];
             
             $result = self::$builder->table($uTable)
                                     ->fields(['*'])
@@ -138,8 +118,8 @@ class Validator
 
             foreach ($result as $res) 
             {
-                if ($res[$uField] === $fieldValue
-                    && $res['id'] !== +$exceptId) 
+                if ($res[$uField] === $field
+                    && +$res['id'] !== +$exceptId) 
                 {
                     $isUnique = false;
                 }
@@ -153,10 +133,9 @@ class Validator
 
     private static function checkExists($field, $uTable, $uField)
     {
-        if (isset($_POST[$field]))
+        if ($field)
         {
             $isExists = false;
-            $fieldValue = $_POST[$field];
             
             $result = self::$builder->table($uTable)
                                     ->fields(['*'])
@@ -165,7 +144,7 @@ class Validator
 
             foreach ($result as $res) 
             {
-                if (+$res[$uField] === +$fieldValue) 
+                if (+$res[$uField] === +$field) 
                 {
                     $isExists = true;
                 }
@@ -179,15 +158,14 @@ class Validator
 
     private static function checkIncluded($field, $list)
     {
-        if (isset($_POST[$field]))
+        if ($field)
         {
             $isIncluded = false;
-            $fieldValue = $_POST[$field];
             $list = explode(',', $list);
 
             foreach ($list as $item)
             {
-                if ($fieldValue === trim($item))
+                if ($field === trim($item))
                 {
                     $isIncluded = true;
                 }
@@ -225,7 +203,7 @@ class Validator
                         $methodName = $rVal['method'];
                         $message = $rVal['message'];
 
-                        if (!self::$methodName($key, $first, $second, $third)) 
+                        if (!self::$methodName(Input::get($key), $first, $second, $third)) 
                         {
                             $messages[] = $message;
                         }

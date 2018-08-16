@@ -2,55 +2,60 @@
 
 namespace app\models;
 
+use libs\Input;
+
 class BooksModel extends Model
 {
     public function getAllBooks()
     {
+        $author = Input::get('author');
+        $genre = Input::get('genre');
+        $title = Input::get('title');
+
+        $dbPrefix = $this->getDbPrefix();
+
         $executeParams = [];
         $sqlQuery = "
             SELECT
-                {$this->dbPrefix}books.id,
-                {$this->dbPrefix}books.title,
-                {$this->dbPrefix}books.description,
-                {$this->dbPrefix}books.image_url,
-                {$this->dbPrefix}books.price,
-                {$this->dbPrefix}books.discount,
-                GROUP_CONCAT(DISTINCT {$this->dbPrefix}authors.name) AS authors,
-                GROUP_CONCAT(DISTINCT {$this->dbPrefix}genres.name) AS genres
-            FROM {$this->dbPrefix}books
-            INNER JOIN {$this->dbPrefix}book_author 
-                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_author.book_id
-            INNER JOIN {$this->dbPrefix}authors
-                ON {$this->dbPrefix}authors.id = {$this->dbPrefix}book_author.author_id
-            INNER JOIN {$this->dbPrefix}book_genre 
-                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_genre.book_id
-            INNER JOIN {$this->dbPrefix}genres
-                ON {$this->dbPrefix}genres.id = {$this->dbPrefix}book_genre.genre_id
+                {$dbPrefix}books.id,
+                {$dbPrefix}books.title,
+                {$dbPrefix}books.description,
+                {$dbPrefix}books.image_url,
+                {$dbPrefix}books.price,
+                {$dbPrefix}books.discount,
+                GROUP_CONCAT(DISTINCT {$dbPrefix}authors.name) AS authors,
+                GROUP_CONCAT(DISTINCT {$dbPrefix}genres.name) AS genres
+            FROM {$dbPrefix}books
+            INNER JOIN {$dbPrefix}book_author 
+                ON {$dbPrefix}books.id = {$dbPrefix}book_author.book_id
+            INNER JOIN {$dbPrefix}authors
+                ON {$dbPrefix}authors.id = {$dbPrefix}book_author.author_id
+            INNER JOIN {$dbPrefix}book_genre 
+                ON {$dbPrefix}books.id = {$dbPrefix}book_genre.book_id
+            INNER JOIN {$dbPrefix}genres
+                ON {$dbPrefix}genres.id = {$dbPrefix}book_genre.genre_id
             WHERE 1=1
         ";
 
-        if (isset($_GET['author']) 
-            && strlen($_GET['author']) > 0)
+        if ($author && strlen($author) > 0)
         {
-            $sqlQuery .= " AND {$this->dbPrefix}authors.name = ?";
-            $executeParams[] = $_GET['author'];
+            $sqlQuery .= " AND {$dbPrefix}authors.name = ?";
+            $executeParams[] = $author;
         }
 
-        if (isset($_GET['genre']) 
-            && strlen($_GET['genre']) > 0)
+        if ($genre && strlen($genre) > 0)
         {
-            $sqlQuery .= " AND {$this->dbPrefix}genres.name = ?";
-            $executeParams[] = $_GET['genre'];
+            $sqlQuery .= " AND {$dbPrefix}genres.name = ?";
+            $executeParams[] = $genre;
         }
 
-        if (isset($_GET['title']) 
-            && strlen($_GET['title']) > 0)
+        if ($title && strlen($title) > 0)
         {
-            $sqlQuery .= " AND {$this->dbPrefix}books.title LIKE ?";
-            $executeParams[] = "%{$_GET['title']}%";
+            $sqlQuery .= " AND {$dbPrefix}books.title LIKE ?";
+            $executeParams[] = "%$title%";
         }
 
-        $sqlQuery .= " GROUP BY {$this->dbPrefix}books.id";
+        $sqlQuery .= " GROUP BY {$dbPrefix}books.id";
 
         $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
 
@@ -68,28 +73,30 @@ class BooksModel extends Model
 
     public function getBookById($id)
     {
+        $dbPrefix = $this->getDbPrefix();
+
         $executeParams = [];
         $sqlQuery = "
             SELECT
-                {$this->dbPrefix}books.id,
-                {$this->dbPrefix}books.title,
-                {$this->dbPrefix}books.description,
-                {$this->dbPrefix}books.image_url,
-                {$this->dbPrefix}books.price,
-                {$this->dbPrefix}books.discount,
-                GROUP_CONCAT(DISTINCT {$this->dbPrefix}authors.name) AS authors,
-                GROUP_CONCAT(DISTINCT {$this->dbPrefix}genres.name) AS genres
-            FROM {$this->dbPrefix}books
-            INNER JOIN {$this->dbPrefix}book_author 
-                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_author.book_id
-            INNER JOIN {$this->dbPrefix}authors
-                ON {$this->dbPrefix}authors.id = {$this->dbPrefix}book_author.author_id
-            INNER JOIN {$this->dbPrefix}book_genre 
-                ON {$this->dbPrefix}books.id = {$this->dbPrefix}book_genre.book_id
-            INNER JOIN {$this->dbPrefix}genres
-                ON {$this->dbPrefix}genres.id = {$this->dbPrefix}book_genre.genre_id
-            WHERE {$this->dbPrefix}books.id = ?
-            GROUP BY {$this->dbPrefix}books.id
+                {$dbPrefix}books.id,
+                {$dbPrefix}books.title,
+                {$dbPrefix}books.description,
+                {$dbPrefix}books.image_url,
+                {$dbPrefix}books.price,
+                {$dbPrefix}books.discount,
+                GROUP_CONCAT(DISTINCT {$dbPrefix}authors.name) AS authors,
+                GROUP_CONCAT(DISTINCT {$dbPrefix}genres.name) AS genres
+            FROM {$dbPrefix}books
+            INNER JOIN {$dbPrefix}book_author 
+                ON {$dbPrefix}books.id = {$dbPrefix}book_author.book_id
+            INNER JOIN {$dbPrefix}authors
+                ON {$dbPrefix}authors.id = {$dbPrefix}book_author.author_id
+            INNER JOIN {$dbPrefix}book_genre 
+                ON {$dbPrefix}books.id = {$dbPrefix}book_genre.book_id
+            INNER JOIN {$dbPrefix}genres
+                ON {$dbPrefix}genres.id = {$dbPrefix}book_genre.genre_id
+            WHERE {$dbPrefix}books.id = ?
+            GROUP BY {$dbPrefix}books.id
         ";
         
         $executeParams[] = $id;

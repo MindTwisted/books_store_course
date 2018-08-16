@@ -6,7 +6,9 @@ class AuthorsModel extends Model
 {
     public function getAllAuthors()
     {
-        $authors = $this->queryBuilder->table("{$this->dbPrefix}authors")
+        $dbPrefix = $this->getDbPrefix();
+
+        $authors = $this->queryBuilder->table("{$dbPrefix}authors")
             ->fields(['id', 'name'])
             ->groupBy(['id'])
             ->select()
@@ -17,7 +19,9 @@ class AuthorsModel extends Model
 
     public function getAuthorById($id)
     {
-        $author = $this->queryBuilder->table("{$this->dbPrefix}authors")
+        $dbPrefix = $this->getDbPrefix();
+
+        $author = $this->queryBuilder->table("{$dbPrefix}authors")
             ->fields(['id', 'name'])
             ->where(['id', '=', $id])
             ->select()
@@ -28,7 +32,9 @@ class AuthorsModel extends Model
 
     public function addAuthor($name)
     {
-        return $this->queryBuilder->table("{$this->dbPrefix}authors")
+        $dbPrefix = $this->getDbPrefix();
+
+        return $this->queryBuilder->table("{$dbPrefix}authors")
             ->fields(['name'])
             ->values([$name])
             ->insert()

@@ -6,6 +6,7 @@ use app\models\UsersModel;
 use libs\View;
 use libs\Auth;
 use libs\Validator;
+use libs\Input;
 
 class AuthController
 {
@@ -40,8 +41,8 @@ class AuthController
             ], 422);
         }
 
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+        $email = Input::get('email');
+        $password = Input::get('password');
 
         $user = $this->usersModel->getUserByEmail($email);
 
