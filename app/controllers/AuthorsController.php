@@ -30,6 +30,13 @@ class AuthorsController
     {
         $author = $this->authorsModel->getAuthorById($id);
 
+        if (count($author) === 0)
+        {
+            return View::render([
+                'text' => "Author with id $id not found."
+            ], 404);
+        }
+
         return View::render([
             'data' => $author
         ]);
@@ -78,11 +85,41 @@ class AuthorsController
             ], 422);
         }
 
-        var_dump("authors update $id");
+        $author = $this->authorsModel->getAuthorById($id);
+
+        if (count($author) === 0)
+        {
+            return View::render([
+                'text' => "Author with id $id not found."
+            ], 404);
+        }
+
+        $name = Input::get('name');
+
+        $this->authorsModel->updateAuthor($id, $name);
+
+        return View::render([
+            'text' => "Author $name was successfully updated."
+        ]);
     }
 
     public function delete($id)
     {
-        var_dump("authors delete $id");
+        $user = Auth::check();
+
+        $author = $this->authorsModel->getAuthorById($id);
+
+        if (count($author) === 0)
+        {
+            return View::render([
+                'text' => "Author with id $id not found."
+            ], 404);
+        }
+
+        $this->authorsModel->deleteAuthor($id);
+
+        return View::render([
+            'text' => "Author {$author[0]['name']} was successfully deleted."
+        ]);
     }
 }

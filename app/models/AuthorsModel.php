@@ -40,4 +40,26 @@ class AuthorsModel extends Model
             ->insert()
             ->run();
     }
+
+    public function updateAuthor($id, $name)
+    {
+        $dbPrefix = $this->getDbPrefix();
+
+        return $this->queryBuilder->table("{$dbPrefix}authors")
+            ->fields(['name'])
+            ->values([$name])
+            ->where(['id', '=', $id])
+            ->update()
+            ->run();
+    }
+
+    public function deleteAuthor($id)
+    {
+        $dbPrefix = $this->getDbPrefix();
+
+        return $this->queryBuilder->table("{$dbPrefix}authors")
+            ->where(['id', '=', $id])
+            ->delete()
+            ->run();
+    }
 }
