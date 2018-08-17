@@ -7,6 +7,7 @@ use libs\View;
 use libs\Auth;
 use libs\Validator;
 use libs\Input;
+use libs\File;
 
 class BooksController
 {
@@ -29,6 +30,13 @@ class BooksController
     public function show($id)
     {
         $book = $this->booksModel->getBookById($id);
+
+        if (count($book) === 0)
+        {
+            return View::render([
+                'text' => "Book with id $id not found."
+            ], 404);
+        }
 
         return View::render([
             'data' => $book
@@ -79,6 +87,40 @@ class BooksController
         ]);
     }
 
+    public function storeImage($id)
+    {
+        $book = $this->booksModel->getBookById($id);
+
+        if (count($book) === 0)
+        {
+            return View::render([
+                'text' => "Book with id $id not found."
+            ], 404);
+        }
+        
+        $image = File::get('image');
+
+        if (!$image->isExistsInInput())
+        {
+            return View::render([
+                'text' => 'File input required.'
+            ], 422);
+        }
+
+        if (!$image->isImage())
+        {
+            return View::render([
+                'text' => 'Uploaded file is not a valid image. Only JPG, PNG and GIF files are allowed.'
+            ], 422);
+        }
+
+        $this->booksModel->addImage($book[0], $image);
+
+        return View::render([
+            'text' => "Image for book '{$book[0]['title']}' was successfully added."
+        ]);
+    }
+
     public function update($id)
     {
         var_dump("update $id");
@@ -89,3 +131,9 @@ class BooksController
         var_dump("delete $id");
     }
 }
+
+/*
+    1) storeImage добавить auth и admin проверки
+    2) book title - alphanumeric валидацию добавить
+    3) в миграции проставить not null на поля таблиц books, users, genres, authors
+*/

@@ -24,3 +24,5 @@ const AUTH_TOKEN_EXPIRES = 3600; // seconds
 
 const ROOT_DIR = '/var/www/html/books_store_course';
 // const ROOT_DIR = '/home/user5/books_store_course';
+
+const STORAGE_PATH = '/var/www/html/books_store_course/app/storage';

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use libs\Input;
+use libs\File;
 
 class BooksModel extends Model
 {
@@ -186,5 +187,19 @@ class BooksModel extends Model
             }
         }
         
+    }
+
+    public function addImage($book, File $image)
+    {
+        $dbPrefix = $this->getDbPrefix();
+        $uploadedFileName = $image->move(STORAGE_PATH . '/images/books', $book['title']);
+        $storageFilePath = "storage/images/books/$uploadedFileName";
+
+        $this->queryBuilder->table("{$dbPrefix}books")
+            ->fields(['image_url'])
+            ->values([$storageFilePath])
+            ->where(['id', '=', $book['id']])
+            ->update()
+            ->run();
     }
 }

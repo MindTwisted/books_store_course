@@ -65,6 +65,12 @@ Router::add('books.store', [
     'controller' => ['app\controllers\BooksController', 'store']
 ]);
 
+Router::add('books.storeImage', [
+    'url' => '/api/books/:id/image',
+    'method' => 'POST',
+    'controller' => ['app\controllers\BooksController', 'storeImage']
+]);
+
 Router::add('books.update', [
     'url' => '/api/books/:id',
     'method' => 'PUT',
