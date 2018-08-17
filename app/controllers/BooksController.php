@@ -57,7 +57,7 @@ class BooksController
         $dbPrefix = $this->booksModel->getDbPrefix();
 
         $validationErrors = Validator::validate([
-            'title' => "required|unique:{$dbPrefix}books:title",
+            'title' => "required|unique:{$dbPrefix}books:title|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
             'discount' => "required|numeric|min:0",
@@ -89,6 +89,15 @@ class BooksController
 
     public function storeImage($id)
     {
+        $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+        
         $book = $this->booksModel->getBookById($id);
 
         if (count($book) === 0)
@@ -131,9 +140,3 @@ class BooksController
         var_dump("delete $id");
     }
 }
-
-/*
-    1) storeImage добавить auth и admin проверки
-    2) book title - alphanumeric валидацию добавить
-    3) в миграции проставить not null на поля таблиц books, users, genres, authors
-*/

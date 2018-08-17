@@ -41,9 +41,9 @@ $builderMySQL->raw("SET FOREIGN_KEY_CHECKS=1");
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}users (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  name VARCHAR(255),
-                  email VARCHAR(255),
-                  password VARCHAR(255),
+                  name VARCHAR(255) NOT NULL,
+                  email VARCHAR(255) NOT NULL,
+                  password VARCHAR(255) NOT NULL,
                   role ENUM('admin', 'user') DEFAULT 'user',
                   discount DECIMAL(8,2) DEFAULT '0.00',
                   UNIQUE (email)
@@ -54,10 +54,10 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}books (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  title VARCHAR(255),
-                  description TEXT,
+                  title VARCHAR(255) NOT NULL,
+                  description TEXT NOT NULL,
                   image_url VARCHAR(255),
-                  price DECIMAL(8,2),
+                  price DECIMAL(8,2) NOT NULL,
                   discount DECIMAL(8,2) DEFAULT '0.00',
                   UNIQUE (title)
             )"
@@ -67,7 +67,7 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}authors (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  name VARCHAR(255),
+                  name VARCHAR(255) NOT NULL,
                   UNIQUE (name)
             )"
 );
@@ -76,7 +76,7 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}genres (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  name VARCHAR(255),
+                  name VARCHAR(255) NOT NULL,
                   UNIQUE (name)
             )"
 );
@@ -115,7 +115,7 @@ $builderMySQL->raw(
 $builderMySQL->raw(
       "CREATE TABLE {$prefix}payment_types (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255)
+                    name VARCHAR(255) NOT NULL
               )"
 );
 
@@ -126,8 +126,8 @@ $builderMySQL->raw(
                   user_id INT UNSIGNED,
                   payment_types_id INT UNSIGNED,
                   status ENUM('in_process', 'done') DEFAULT 'in_process',
-                  total_discount DECIMAL(8,2),
-                  total_price DECIMAL(8,2),
+                  total_discount DECIMAL(8,2) NOT NULL,
+                  total_price DECIMAL(8,2) NOT NULL,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (payment_types_id)
                         REFERENCES {$prefix}payment_types (id) 
@@ -144,9 +144,9 @@ $builderMySQL->raw(
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     book_id INT UNSIGNED,
                     order_id INT UNSIGNED,
-                    book_title VARCHAR(255),
-                    book_count INT UNSIGNED,
-                    book_price DECIMAL(8,2),
+                    book_title VARCHAR(255) NOT NULL,
+                    book_count INT UNSIGNED NOT NULL,
+                    book_price DECIMAL(8,2) NOT NULL,
                     book_discount DECIMAL(8,2) DEFAULT '0.00',
                     FOREIGN KEY (book_id)
                           REFERENCES {$prefix}books (id) 
@@ -163,7 +163,7 @@ $builderMySQL->raw(
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
-                  count INT UNSIGNED,
+                  count INT UNSIGNED NOT NULL,
                   FOREIGN KEY (book_id)
                         REFERENCES {$prefix}books (id) 
                         ON DELETE CASCADE,
@@ -178,8 +178,8 @@ $builderMySQL->raw(
     "CREATE TABLE {$prefix}auth_tokens (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   user_id INT UNSIGNED,
-                  token VARCHAR(255),
-                  expires_at DATETIME,
+                  token VARCHAR(255) NOT NULL,
+                  expires_at DATETIME NOT NULL,
                   UNIQUE (token),
                   FOREIGN KEY (user_id)
                         REFERENCES {$prefix}users (id)

@@ -9,7 +9,7 @@ class File
     private function getFileName($name)
     {
         $name = strtolower($name);
-        $name = preg_replace('/[^a-zA-Z0-9\s]/', '', $name);
+        $name = preg_replace('/[^a-zA-Z0-9\s\-]/', '', $name);
         $name = trim($name);
         $name = str_replace(' ', '-', $name);
         

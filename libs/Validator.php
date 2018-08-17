@@ -46,6 +46,10 @@ class Validator
             'method' => 'checkIncluded',
             'message' => 'This value doesn\'t included in available list of values.',
         ],
+        "/^alpha_dash$/" => [
+            'method' => 'checkAlphaDash',
+            'message' => 'This field requires only alphanumeric characters with dashes, underscores and spaces.',
+        ],
     ];
 
     private static function setBuilder()
@@ -236,6 +240,16 @@ class Validator
         }
 
         return false;
+    }
+
+    private static function checkAlphaDash($field)
+    {
+        if (empty($field) && $field !== '0')
+        {
+            return true;
+        }
+
+        return !!preg_match('/^[\w\s\-]+$/', $field);
     }
 
     public static function validate($array)
