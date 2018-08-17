@@ -58,7 +58,7 @@ class AuthController
                 $token = Auth::login($user);
 
                 return View::render([
-                    'text' => "User {$user['name']} was successfully logged in.",
+                    'text' => "User '{$user['name']}' was successfully logged in.",
                     'data' => [
                         'token' => $token,
                         'role' => $user['role']
@@ -78,7 +78,7 @@ class AuthController
         Auth::logout($user);
         
         return View::render([
-            'text' => "User {$user['name']} was successfully logged out."
+            'text' => "User '{$user['name']}' was successfully logged out."
         ]);  
     }
 }

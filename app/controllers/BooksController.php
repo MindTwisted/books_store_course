@@ -34,7 +34,7 @@ class BooksController
         if (count($book) === 0)
         {
             return View::render([
-                'text' => "Book with id $id not found."
+                'text' => "Book with id '$id' not found."
             ], 404);
         }
 
@@ -83,7 +83,7 @@ class BooksController
         $this->booksModel->addBook($title, $description, $price, $discount, $author, $genre);
 
         return View::render([
-            'text' => "Book $title was successfully added."
+            'text' => "Book '$title' was successfully added."
         ]);
     }
 
@@ -103,7 +103,7 @@ class BooksController
         if (count($book) === 0)
         {
             return View::render([
-                'text' => "Book with id $id not found."
+                'text' => "Book with id '$id' not found."
             ], 404);
         }
         
@@ -132,7 +132,46 @@ class BooksController
 
     public function update($id)
     {
-        var_dump("update $id");
+        $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+
+        $dbPrefix = $this->booksModel->getDbPrefix();
+
+        $validationErrors = Validator::validate([
+            'title' => "required|unique:{$dbPrefix}books:title:{$id}|alpha_dash",
+            'description' => "required|minLength:20",
+            'price' => "required|numeric",
+            'discount' => "required|numeric|min:0",
+            'author' => "integer|min:1|exists:{$dbPrefix}authors:id",
+            'genre' => "integer|min:1|exists:{$dbPrefix}genres:id"
+        ]);
+
+        if (count($validationErrors) > 0)
+        {
+            return View::render([
+                'text' => 'The credentials you supplied were not correct.',
+                'data' => $validationErrors
+            ], 422);
+        }
+
+        $title = Input::get('title');
+        $description = Input::get('description');
+        $price = Input::get('price');
+        $discount = Input::get('discount');
+        $author = Input::get('author');
+        $genre = Input::get('genre');
+
+        $this->booksModel->updateBook($id, $title, $description, $price, $discount, $author, $genre);
+
+        return View::render([
+            'text' => "Book '$title' was successfully updated."
+        ]);
     }
 
     public function delete($id)

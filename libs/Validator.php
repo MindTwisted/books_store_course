@@ -185,7 +185,12 @@ class Validator
                                 ->select()
                                 ->run();
 
-        return count($result) === 0;
+        if (count($result) !== 0)
+        {
+            return +$result[0]['id'] === +$exceptId;
+        }
+
+        return true;
     }
 
     private static function checkExists($field, $uTable, $uField)

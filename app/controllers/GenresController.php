@@ -33,7 +33,7 @@ class GenresController
         if (count($genre) === 0)
         {
             return View::render([
-                'text' => "Genre with id $id not found."
+                'text' => "Genre with id '$id' not found."
             ], 404);
         }
 
@@ -72,7 +72,7 @@ class GenresController
         $this->genresModel->addGenre($name);
 
         return View::render([
-            'text' => "Genre $name was successfully added."
+            'text' => "Genre '$name' was successfully added."
         ]);
     }
 
@@ -106,7 +106,7 @@ class GenresController
         if (count($genre) === 0)
         {
             return View::render([
-                'text' => "Genre with id $id not found."
+                'text' => "Genre with id '$id' not found."
             ], 404);
         }
 
@@ -115,7 +115,7 @@ class GenresController
         $this->genresModel->updateGenre($id, $name);
 
         return View::render([
-            'text' => "Genre $name was successfully updated."
+            'text' => "Genre '$name' was successfully updated."
         ]);
     }
 
@@ -135,14 +135,14 @@ class GenresController
         if (count($genre) === 0)
         {
             return View::render([
-                'text' => "Genre with id $id not found."
+                'text' => "Genre with id '$id' not found."
             ], 404);
         }
 
         $this->genresModel->deleteGenre($id);
 
         return View::render([
-            'text' => "Genre {$genre[0]['name']} was successfully deleted."
+            'text' => "Genre '{$genre[0]['name']}' was successfully deleted."
         ]);
     }
 }

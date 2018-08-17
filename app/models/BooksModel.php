@@ -202,4 +202,9 @@ class BooksModel extends Model
             ->update()
             ->run();
     }
+
+    public function updateBook($id, $title, $description, $price, $discount, $author, $genre)
+    {
+        var_dump('update book from model');
+    }
 }

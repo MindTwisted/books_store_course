@@ -51,7 +51,7 @@ class UsersController
         if (count($user) === 0)
         {
             return View::render([
-                'text' => "User with id $id not found."
+                'text' => "User with id '$id' not found."
             ], 404);
         }
 
@@ -85,7 +85,7 @@ class UsersController
         $this->usersModel->addUser($name, $email, $password);
 
         return View::render([
-            'text' => "User $name was successfully registered."
+            'text' => "User '$name' was successfully registered."
         ]);
     }
 
@@ -126,7 +126,7 @@ class UsersController
         $this->usersModel->updateUser($id, $name, $email, $password, $discount);
 
         return View::render([
-            'text' => "User $name was successfully updated."
+            'text' => "User '$name' was successfully updated."
         ]);
     }
 }

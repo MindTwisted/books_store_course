@@ -33,7 +33,7 @@ class AuthorsController
         if (count($author) === 0)
         {
             return View::render([
-                'text' => "Author with id $id not found."
+                'text' => "Author with id '$id' not found."
             ], 404);
         }
 
@@ -72,7 +72,7 @@ class AuthorsController
         $this->authorsModel->addAuthor($name);
 
         return View::render([
-            'text' => "Author $name was successfully added."
+            'text' => "Author '$name' was successfully added."
         ]);
     }
 
@@ -106,7 +106,7 @@ class AuthorsController
         if (count($author) === 0)
         {
             return View::render([
-                'text' => "Author with id $id not found."
+                'text' => "Author with id '$id' not found."
             ], 404);
         }
 
@@ -115,7 +115,7 @@ class AuthorsController
         $this->authorsModel->updateAuthor($id, $name);
 
         return View::render([
-            'text' => "Author $name was successfully updated."
+            'text' => "Author '$name' was successfully updated."
         ]);
     }
 
@@ -135,14 +135,14 @@ class AuthorsController
         if (count($author) === 0)
         {
             return View::render([
-                'text' => "Author with id $id not found."
+                'text' => "Author with id '$id' not found."
             ], 404);
         }
 
         $this->authorsModel->deleteAuthor($id);
 
         return View::render([
-            'text' => "Author {$author[0]['name']} was successfully deleted."
+            'text' => "Author '{$author[0]['name']}' was successfully deleted."
         ]);
     }
 }
