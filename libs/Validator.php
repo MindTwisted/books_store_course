@@ -127,7 +127,12 @@ class Validator
 
     private static function checkEmail($field)
     {
-        return $field && !!filter_var($field, FILTER_VALIDATE_EMAIL);
+        if (empty($field) && $field !== '0')
+        {
+            return true;
+        }
+
+        return !!filter_var($field, FILTER_VALIDATE_EMAIL);
     }
 
     private static function checkMin($field, $min)
@@ -164,28 +169,19 @@ class Validator
 
     private static function checkUnique($field, $uTable, $uField, $exceptId = 0)
     {
-        if ($field)
+        if (empty($field) && $field !== '0')
         {
-            $isUnique = true;
-            
-            $result = self::$builder->table($uTable)
-                                    ->fields(['*'])
-                                    ->select()
-                                    ->run();
-
-            foreach ($result as $res) 
-            {
-                if ($res[$uField] === $field
-                    && +$res['id'] !== +$exceptId) 
-                {
-                    $isUnique = false;
-                }
-            }
-
-            return $isUnique;
+            return true;
         }
 
-        return false;
+        $result = self::$builder->table($uTable)
+                                ->fields(['*'])
+                                ->where([$uField, '=', $field])
+                                ->limit(1)
+                                ->select()
+                                ->run();
+
+        return count($result) === 0;
     }
 
     private static function checkExists($field, $uTable, $uField)
@@ -195,40 +191,30 @@ class Validator
             return true;
         }
  
-        $result = self::$builder->table($uTable)
-                                ->fields([$uField])
-                                ->select()
-                                ->run();
-
         if (!is_array($field))
         {
-            $isExists = false;
+            $result = self::$builder->table($uTable)
+                                    ->fields([$uField])
+                                    ->where([$uField, '=', $field])
+                                    ->limit(1)
+                                    ->select()
+                                    ->run();
 
-            foreach ($result as $res) 
-            {
-                if ($res[$uField] == $field) 
-                {
-                    $isExists = true;
-                }
-            }
-
-            return $isExists;
+            return count($result) > 0;
         }
 
-        $isExists = true;
-        $resultValues = array_map(function($res) use ($uField) {
-            return $res[$uField];
-        }, $result);
-        
-        foreach ($field as $row)
+        $sqlQuery = "SELECT $uField FROM $uTable WHERE";
+
+        foreach($field as $row)
         {
-            if (!in_array($row, $resultValues))
-            {
-                $isExists = false;
-            }
+            $sqlQuery .= " $uField = ? OR";
         }
 
-        return $isExists;
+        $sqlQuery = trim($sqlQuery, 'OR');
+
+        $result = self::$builder->raw($sqlQuery, $field)->fetchAll(\PDO::FETCH_ASSOC);
+
+        return count($result) === count($field);
     }
 
     private static function checkIncluded($field, $list)
