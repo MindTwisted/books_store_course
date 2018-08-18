@@ -87,6 +87,15 @@ class AuthorsController
             ], 403);
         }
 
+        $author = $this->authorsModel->getAuthorById($id);
+
+        if (count($author) === 0)
+        {
+            return View::render([
+                'text' => "Author with id '$id' not found."
+            ], 404);
+        }
+
         $dbPrefix = $this->authorsModel->getDbPrefix();
 
         $validationErrors = Validator::validate([
@@ -99,15 +108,6 @@ class AuthorsController
                 'text' => 'The credentials you supplied were not correct.',
                 'data' => $validationErrors
             ], 422);
-        }
-
-        $author = $this->authorsModel->getAuthorById($id);
-
-        if (count($author) === 0)
-        {
-            return View::render([
-                'text' => "Author with id '$id' not found."
-            ], 404);
         }
 
         $name = Input::get('name');

@@ -65,6 +65,18 @@ Router::add('books.store', [
     'controller' => ['app\controllers\BooksController', 'store']
 ]);
 
+Router::add('books.storeAuthors', [
+    'url' => '/api/books/:id/authors',
+    'method' => 'POST',
+    'controller' => ['app\controllers\BooksController', 'storeAuthors']
+]);
+
+Router::add('books.storeGenres', [
+    'url' => '/api/books/:id/genres',
+    'method' => 'POST',
+    'controller' => ['app\controllers\BooksController', 'storeGenres']
+]);
+
 Router::add('books.storeImage', [
     'url' => '/api/books/:id/image',
     'method' => 'POST',

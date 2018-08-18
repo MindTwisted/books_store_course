@@ -116,7 +116,7 @@ class BooksModel extends Model
         return $books;
     }
 
-    public function addBook($title, $description, $price, $discount, $author, $genre)
+    public function addBook($title, $description, $price, $discount)
     {
         $dbPrefix = $this->getDbPrefix();
 
@@ -125,68 +125,68 @@ class BooksModel extends Model
             ->values([$title, $description, $price, $discount])
             ->insert()
             ->run();
+    }
 
-        $bookId = $this->queryBuilder->table("{$dbPrefix}books")
-            ->fields(['id'])
-            ->where(['title', '=', $title])
-            ->limit(1)
-            ->select()
-            ->run()[0]['id'];
+    public function addAuthors($bookId, $author)
+    {
+        $dbPrefix = $this->getDbPrefix();
 
-        if (null !== $author)
+        $this->deleteAuthors($bookId);
+
+        if (is_array($author))
         {
-            if (is_array($author))
-            {
-                $valuesArray = [];
+            $valuesArray = [];
 
-                foreach($author as $row)
-                {
-                    $valuesArray[] = [+$bookId, +$row];
-                }
-
-                $this->queryBuilder->table("{$dbPrefix}book_author")
-                    ->fields(['book_id', 'author_id'])
-                    ->values(...$valuesArray)
-                    ->insert()
-                    ->run();
-            }
-            else
+            foreach($author as $row)
             {
-                $this->queryBuilder->table("{$dbPrefix}book_author")
-                    ->fields(['book_id', 'author_id'])
-                    ->values([+$bookId, +$author])
-                    ->insert()
-                    ->run();
+                $valuesArray[] = [+$bookId, +$row];
             }
+
+            $this->queryBuilder->table("{$dbPrefix}book_author")
+                ->fields(['book_id', 'author_id'])
+                ->values(...$valuesArray)
+                ->insert()
+                ->run();
         }
-
-        if (null !== $genre)
+        else
         {
-            if (is_array($genre))
-            {
-                $valuesArray = [];
-
-                foreach($genre as $row)
-                {
-                    $valuesArray[] = [+$bookId, +$row];
-                }
-
-                $this->queryBuilder->table("{$dbPrefix}book_genre")
-                    ->fields(['book_id', 'genre_id'])
-                    ->values(...$valuesArray)
-                    ->insert()
-                    ->run();
-            }
-            else
-            {
-                $this->queryBuilder->table("{$dbPrefix}book_genre")
-                    ->fields(['book_id', 'genre_id'])
-                    ->values([+$bookId, +$genre])
-                    ->insert()
-                    ->run();
-            }
+            $this->queryBuilder->table("{$dbPrefix}book_author")
+                ->fields(['book_id', 'author_id'])
+                ->values([+$bookId, +$author])
+                ->insert()
+                ->run();
         }
-        
+    }
+
+    public function addGenres($bookId, $genre)
+    {
+        $dbPrefix = $this->getDbPrefix();
+
+        $this->deleteGenres($bookId);
+
+        if (is_array($genre))
+        {
+            $valuesArray = [];
+
+            foreach($genre as $row)
+            {
+                $valuesArray[] = [+$bookId, +$row];
+            }
+
+            $this->queryBuilder->table("{$dbPrefix}book_genre")
+                ->fields(['book_id', 'genre_id'])
+                ->values(...$valuesArray)
+                ->insert()
+                ->run();
+        }
+        else
+        {
+            $this->queryBuilder->table("{$dbPrefix}book_genre")
+                ->fields(['book_id', 'genre_id'])
+                ->values([+$bookId, +$genre])
+                ->insert()
+                ->run();
+        }
     }
 
     public function addImage($book, File $image)
@@ -206,5 +206,25 @@ class BooksModel extends Model
     public function updateBook($id, $title, $description, $price, $discount, $author, $genre)
     {
         var_dump('update book from model');
+    }
+
+    public function deleteAuthors($id)
+    {
+        $dbPrefix = $this->getDbPrefix();
+        
+        $this->queryBuilder->table("{$dbPrefix}book_author")
+            ->where(['book_id', '=', $id])
+            ->delete()
+            ->run();
+    }
+
+    public function deleteGenres($id)
+    {
+        $dbPrefix = $this->getDbPrefix();
+        
+        $this->queryBuilder->table("{$dbPrefix}book_genre")
+            ->where(['book_id', '=', $id])
+            ->delete()
+            ->run();
     }
 }

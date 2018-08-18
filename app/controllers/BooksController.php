@@ -60,9 +60,7 @@ class BooksController
             'title' => "required|unique:{$dbPrefix}books:title|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
-            'discount' => "required|numeric|min:0",
-            'author' => "integer|min:1|exists:{$dbPrefix}authors:id",
-            'genre' => "integer|min:1|exists:{$dbPrefix}genres:id"
+            'discount' => "required|numeric|min:0"
         ]);
 
         if (count($validationErrors) > 0)
@@ -77,13 +75,97 @@ class BooksController
         $description = Input::get('description');
         $price = Input::get('price');
         $discount = Input::get('discount');
-        $author = Input::get('author');
-        $genre = Input::get('genre');
 
-        $this->booksModel->addBook($title, $description, $price, $discount, $author, $genre);
+        $this->booksModel->addBook($title, $description, $price, $discount);
 
         return View::render([
             'text' => "Book '$title' was successfully added."
+        ]);
+    }
+
+    public function storeAuthors($id)
+    {
+        $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+
+        $book = $this->booksModel->getBookById($id);
+
+        if (count($book) === 0)
+        {
+            return View::render([
+                'text' => "Book with id '$id' not found."
+            ], 404);
+        }
+
+        $dbPrefix = $this->booksModel->getDbPrefix();
+
+        $validationErrors = Validator::validate([
+            'author' => "required|integer|min:1|exists:{$dbPrefix}authors:id"
+        ]);
+
+        if (count($validationErrors) > 0)
+        {
+            return View::render([
+                'text' => 'The credentials you supplied were not correct.',
+                'data' => $validationErrors
+            ], 422);
+        }
+
+        $author = Input::get('author');
+
+        $this->booksModel->addAuthors($id, $author);
+
+        return View::render([
+            'text' => "Authors for book id '$id' was successfully added."
+        ]);
+    }
+
+    public function storeGenres($id)
+    {
+        $user = Auth::check();
+
+        if ('admin' !== $user['role'])
+        {
+            return View::render([
+                'text' => "Route permission denied."
+            ], 403);
+        }
+
+        $book = $this->booksModel->getBookById($id);
+
+        if (count($book) === 0)
+        {
+            return View::render([
+                'text' => "Book with id '$id' not found."
+            ], 404);
+        }
+
+        $dbPrefix = $this->booksModel->getDbPrefix();
+
+        $validationErrors = Validator::validate([
+            'genre' => "required|integer|min:1|exists:{$dbPrefix}genres:id"
+        ]);
+
+        if (count($validationErrors) > 0)
+        {
+            return View::render([
+                'text' => 'The credentials you supplied were not correct.',
+                'data' => $validationErrors
+            ], 422);
+        }
+
+        $genre = Input::get('genre');
+
+        $this->booksModel->addGenres($id, $genre);
+
+        return View::render([
+            'text' => "Genres for book id '$id' was successfully added."
         ]);
     }
 
@@ -139,6 +221,15 @@ class BooksController
             return View::render([
                 'text' => "Route permission denied."
             ], 403);
+        }
+
+        $book = $this->booksModel->getBookById($id);
+
+        if (count($book) === 0)
+        {
+            return View::render([
+                'text' => "Book with id '$id' not found."
+            ], 404);
         }
 
         $dbPrefix = $this->booksModel->getDbPrefix();

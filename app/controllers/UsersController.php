@@ -101,6 +101,15 @@ class UsersController
             ], 403);
         }
 
+        $user = $this->usersModel->getUserById($id);
+
+        if (count($user) === 0)
+        {
+            return View::render([
+                'text' => "User with id '$id' not found."
+            ], 404);
+        }
+
         $dbPrefix = $this->usersModel->getDbPrefix();
         
         $validationErrors = Validator::validate([

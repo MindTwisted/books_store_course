@@ -87,6 +87,15 @@ class GenresController
             ], 403);
         }
 
+        $genre = $this->genresModel->getGenreById($id);
+
+        if (count($genre) === 0)
+        {
+            return View::render([
+                'text' => "Genre with id '$id' not found."
+            ], 404);
+        }
+
         $dbPrefix = $this->genresModel->getDbPrefix();
 
         $validationErrors = Validator::validate([
@@ -99,15 +108,6 @@ class GenresController
                 'text' => 'The credentials you supplied were not correct.',
                 'data' => $validationErrors
             ], 422);
-        }
-
-        $genre = $this->genresModel->getGenreById($id);
-
-        if (count($genre) === 0)
-        {
-            return View::render([
-                'text' => "Genre with id '$id' not found."
-            ], 404);
         }
 
         $name = Input::get('name');
