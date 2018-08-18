@@ -6,7 +6,10 @@ use libs\Router;
 Router::add('auth.index', [
     'url' => '/api/auth',
     'method' => 'GET',
-    'controller' => ['app\controllers\AuthController', 'index']
+    'controller' => ['app\controllers\AuthController', 'index'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
 ]);
 
 Router::add('auth.store', [
@@ -18,20 +21,29 @@ Router::add('auth.store', [
 Router::add('auth.delete', [
     'url' => '/api/auth',
     'method' => 'DELETE',
-    'controller' => ['app\controllers\AuthController', 'delete']
+    'controller' => ['app\controllers\AuthController', 'delete'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
 ]);
 
 // Users routes
 Router::add('users.index', [
     'url' => '/api/users',
     'method' => 'GET',
-    'controller' => ['app\controllers\UsersController', 'index']
+    'controller' => ['app\controllers\UsersController', 'index'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('users.show', [
     'url' => '/api/users/:id',
     'method' => 'GET',
-    'controller' => ['app\controllers\UsersController', 'show']
+    'controller' => ['app\controllers\UsersController', 'show'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('users.store', [
@@ -43,7 +55,19 @@ Router::add('users.store', [
 Router::add('users.update', [
     'url' => '/api/users/:id',
     'method' => 'PUT',
-    'controller' => ['app\controllers\UsersController', 'update']
+    'controller' => ['app\controllers\UsersController', 'update'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
+]);
+
+Router::add('users.updateCurrentAuth', [
+    'url' => '/api/users',
+    'method' => 'PUT',
+    'controller' => ['app\controllers\UsersController', 'updateCurrentAuth'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
 ]);
 
 // Books routes
@@ -62,37 +86,55 @@ Router::add('books.show', [
 Router::add('books.store', [
     'url' => '/api/books',
     'method' => 'POST',
-    'controller' => ['app\controllers\BooksController', 'store']
+    'controller' => ['app\controllers\BooksController', 'store'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('books.storeAuthors', [
     'url' => '/api/books/:id/authors',
     'method' => 'POST',
-    'controller' => ['app\controllers\BooksController', 'storeAuthors']
+    'controller' => ['app\controllers\BooksController', 'storeAuthors'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('books.storeGenres', [
     'url' => '/api/books/:id/genres',
     'method' => 'POST',
-    'controller' => ['app\controllers\BooksController', 'storeGenres']
+    'controller' => ['app\controllers\BooksController', 'storeGenres'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('books.storeImage', [
     'url' => '/api/books/:id/image',
     'method' => 'POST',
-    'controller' => ['app\controllers\BooksController', 'storeImage']
+    'controller' => ['app\controllers\BooksController', 'storeImage'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('books.update', [
     'url' => '/api/books/:id',
     'method' => 'PUT',
-    'controller' => ['app\controllers\BooksController', 'update']
+    'controller' => ['app\controllers\BooksController', 'update'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('books.delete', [
     'url' => '/api/books/:id',
     'method' => 'DELETE',
-    'controller' => ['app\controllers\BooksController', 'delete']
+    'controller' => ['app\controllers\BooksController', 'delete'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 // Authors routes
@@ -111,19 +153,28 @@ Router::add('authors.show', [
 Router::add('authors.store', [
     'url' => '/api/authors',
     'method' => 'POST',
-    'controller' => ['app\controllers\AuthorsController', 'store']
+    'controller' => ['app\controllers\AuthorsController', 'store'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('authors.update', [
     'url' => '/api/authors/:id',
     'method' => 'PUT',
-    'controller' => ['app\controllers\AuthorsController', 'update']
+    'controller' => ['app\controllers\AuthorsController', 'update'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('authors.delete', [
     'url' => '/api/authors/:id',
     'method' => 'DELETE',
-    'controller' => ['app\controllers\AuthorsController', 'delete']
+    'controller' => ['app\controllers\AuthorsController', 'delete'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 // Genres routes
@@ -142,19 +193,28 @@ Router::add('genres.show', [
 Router::add('genres.store', [
     'url' => '/api/genres',
     'method' => 'POST',
-    'controller' => ['app\controllers\GenresController', 'store']
+    'controller' => ['app\controllers\GenresController', 'store'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('genres.update', [
     'url' => '/api/genres/:id',
     'method' => 'PUT',
-    'controller' => ['app\controllers\GenresController', 'update']
+    'controller' => ['app\controllers\GenresController', 'update'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 Router::add('genres.delete', [
     'url' => '/api/genres/:id',
     'method' => 'DELETE',
-    'controller' => ['app\controllers\GenresController', 'delete']
+    'controller' => ['app\controllers\GenresController', 'delete'],
+    'filters' => [
+        'permission' => 'isAdmin'
+    ]
 ]);
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];

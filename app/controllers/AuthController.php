@@ -19,7 +19,7 @@ class AuthController
 
     public function index()
     {
-        $user = Auth::check();
+        $user = Auth::user();
         
         return View::render([
             'data' => $user
@@ -73,7 +73,7 @@ class AuthController
 
     public function delete()
     {
-        $user = Auth::check();
+        $user = Auth::user();
 
         Auth::logout($user);
         

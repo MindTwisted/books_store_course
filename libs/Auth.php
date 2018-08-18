@@ -8,6 +8,8 @@ use libs\View;
 class Auth
 {
     private static $builder = null;
+    private static $user = null;
+    private $instanceUser = null;
 
     private static function setBuilder()
     {
@@ -22,6 +24,28 @@ class Auth
                 MYSQL_SETTINGS['password']
             );
         }
+    }
+
+    private function isAdmin()
+    {
+        return 'admin' === $this->instanceUser['role'];
+    }
+
+    public function __construct($user)
+    {
+        $this->instanceUser = $user;
+    }
+
+    public function checkAdmin()
+    {
+        if (!$this->isAdmin())
+        {
+            return View::render([
+                'text' => "Permission denied."
+            ], 403);
+        }
+
+        return true;
     }
 
     public static function login($user)
@@ -48,6 +72,11 @@ class Auth
             ->where(['user_id', '=', $user['id']])
             ->delete()
             ->run();
+    }
+
+    public static function user()
+    {
+        return self::$user;
     }
 
     public static function check()
@@ -95,6 +124,8 @@ class Auth
             ], 401);
         }
 
-        return $user[0];
+        self::$user = $user[0];
+
+        return new self(self::$user);
     }
 }

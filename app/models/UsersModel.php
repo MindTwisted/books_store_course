@@ -11,6 +11,7 @@ class UsersModel extends Model
         $user = $this->queryBuilder->table("{$dbPrefix}users")
             ->fields(['*'])
             ->where(['email', '=', $email])
+            ->limit(1)
             ->select()
             ->run();
 
@@ -23,7 +24,6 @@ class UsersModel extends Model
 
         $users = $this->queryBuilder->table("{$dbPrefix}users")
             ->fields(['id', 'name', 'email', 'role', 'discount'])
-            ->where(['role', '=', 'user'])
             ->select()
             ->run();
 
@@ -37,7 +37,7 @@ class UsersModel extends Model
         $user = $this->queryBuilder->table("{$dbPrefix}users")
             ->fields(['id', 'name', 'email', 'role', 'discount'])
             ->where(['id', '=', $id])
-            ->andWhere(['role', '=', 'user'])
+            ->limit(1)
             ->select()
             ->run();
 
@@ -55,7 +55,7 @@ class UsersModel extends Model
             ->run();
     }
 
-    public function updateUser($id, $name, $email, $password, $discount)
+    public function updateUser($id, $name, $email, $password, $discount = null)
     {
         $dbPrefix = $this->getDbPrefix();
 
@@ -63,6 +63,7 @@ class UsersModel extends Model
             ->fields(['name', 'email', 'password'])
             ->values([$name, $email, password_hash($password, PASSWORD_BCRYPT)])
             ->where(['id', '=', $id])
+            ->limit(1)
             ->update()
             ->run();
 
@@ -72,6 +73,7 @@ class UsersModel extends Model
                 ->fields(['discount'])
                 ->values([$discount])
                 ->where(['id', '=', $id])
+                ->limit(1)
                 ->update()
                 ->run();
         }

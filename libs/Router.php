@@ -2,10 +2,40 @@
 
 namespace libs;
 
+use libs\Auth;
+
 class Router
 {
-    protected static $methods = ['GET', 'POST', 'PUT', 'DELETE'];
-    protected static $routes = [];
+    private static $methods = ['GET', 'POST', 'PUT', 'DELETE'];
+    private static $routes = [];
+    private static $permissions = ['isAdmin', 'isAuth'];
+
+    private static function checkPermission($route)
+    {
+        if (!isset($route['filters']['permission']))
+        {
+            return false;
+        }
+
+        $permission = $route['filters']['permission'];
+        
+        if (!in_array($permission, self::$permissions))
+        {
+            throw new \Exception('Unavailable permission type.');
+        }
+
+        self::$permission();
+    }
+
+    private static function isAdmin()
+    {
+        Auth::check()->checkAdmin();
+    }
+
+    private static function isAuth()
+    {
+        Auth::check();
+    }
 
     public static function getUrl($routeName, $params = [])
     {
@@ -20,6 +50,19 @@ class Router
         }
 
         return str_replace('//', '/', isset($urlWithParams) ? $urlWithParams : $url);
+    }
+
+    public static function currentRouteName()
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+
+        foreach (self::$routes as $key => $val) 
+        {
+            if ($uri === $val['url']) 
+            {
+                return $key;
+            }
+        }
     }
 
     public static function add($routeName, $routeSettings)
@@ -48,6 +91,8 @@ class Router
             if ($val['method'] === $method
             && preg_match($pattern, $uri, $matches))
             {
+                self::checkPermission($val);
+                
                 return [
                     'settings' => $val,
                     'param' => count($matches) > 1 ? $matches[1] : null,
@@ -58,18 +103,5 @@ class Router
         return View::render([
             'text' => "Current route doesn't exists."
         ], 404);
-    }
-
-    public static function currentRouteName()
-    {
-        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-
-        foreach (self::$routes as $key => $val) 
-        {
-            if ($uri === $val['url']) 
-            {
-                return $key;
-            }
-        }
     }
 }

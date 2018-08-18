@@ -44,15 +44,6 @@ class GenresController
 
     public function store()
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $dbPrefix = $this->genresModel->getDbPrefix();
         
         $validationErrors = Validator::validate([
@@ -78,15 +69,6 @@ class GenresController
 
     public function update($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $genre = $this->genresModel->getGenreById($id);
 
         if (count($genre) === 0)
@@ -121,15 +103,6 @@ class GenresController
 
     public function delete($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $genre = $this->genresModel->getGenreById($id);
 
         if (count($genre) === 0)

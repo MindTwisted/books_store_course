@@ -45,15 +45,6 @@ class BooksController
 
     public function store()
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $dbPrefix = $this->booksModel->getDbPrefix();
 
         $validationErrors = Validator::validate([
@@ -85,15 +76,6 @@ class BooksController
 
     public function storeAuthors($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $book = $this->booksModel->getBookById($id);
 
         if (count($book) === 0)
@@ -128,15 +110,6 @@ class BooksController
 
     public function storeGenres($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $book = $this->booksModel->getBookById($id);
 
         if (count($book) === 0)
@@ -171,15 +144,6 @@ class BooksController
 
     public function storeImage($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-        
         $book = $this->booksModel->getBookById($id);
 
         if (count($book) === 0)
@@ -214,15 +178,6 @@ class BooksController
 
     public function update($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $book = $this->booksModel->getBookById($id);
 
         if (count($book) === 0)

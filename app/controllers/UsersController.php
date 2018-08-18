@@ -19,15 +19,6 @@ class UsersController
 
     public function index()
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-        
         $users = $this->usersModel->getAllUsers();
 
         return View::render([
@@ -37,15 +28,6 @@ class UsersController
 
     public function show($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $user = $this->usersModel->getUserById($id);
 
         if (count($user) === 0)
@@ -91,16 +73,6 @@ class UsersController
 
     public function update($id)
     {
-        $user = Auth::check();
-
-        if ('admin' !== $user['role'] 
-            && +$id !== +$user['id'])
-        {
-            return View::render([
-                'text' => "Route permission denied."
-            ], 403);
-        }
-
         $user = $this->usersModel->getUserById($id);
 
         if (count($user) === 0)
@@ -130,9 +102,40 @@ class UsersController
         $name = Input::get('name');
         $email = Input::get('email');
         $password = Input::get('password');
-        $discount = 'admin' === $user['role'] ? Input::get('discount') : null;
+        $discount = Input::get('discount');
 
         $this->usersModel->updateUser($id, $name, $email, $password, $discount);
+
+        return View::render([
+            'text' => "User '$name' was successfully updated."
+        ]);
+    }
+
+    public function updateCurrentAuth()
+    {
+        $user = Auth::user();
+
+        $dbPrefix = $this->usersModel->getDbPrefix();
+        
+        $validationErrors = Validator::validate([
+            'name' => "required|minLength:6",
+            'email' => "required|email|unique:{$dbPrefix}users:email:{$user['id']}",
+            'password' => "required|minLength:6"
+        ]);
+
+        if (count($validationErrors) > 0)
+        {
+            return View::render([
+                'text' => 'The credentials you supplied were not correct.',
+                'data' => $validationErrors
+            ], 422);
+        }
+
+        $name = Input::get('name');
+        $email = Input::get('email');
+        $password = Input::get('password');
+
+        $this->usersModel->updateUser($user['id'], $name, $email, $password);
 
         return View::render([
             'text' => "User '$name' was successfully updated."
