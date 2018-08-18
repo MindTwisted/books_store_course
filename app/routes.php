@@ -42,7 +42,8 @@ Router::add('users.show', [
     'method' => 'GET',
     'controller' => ['app\controllers\UsersController', 'show'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:users:id'
     ]
 ]);
 
@@ -57,14 +58,15 @@ Router::add('users.update', [
     'method' => 'PUT',
     'controller' => ['app\controllers\UsersController', 'update'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:users:id'
     ]
 ]);
 
-Router::add('users.updateCurrentAuth', [
+Router::add('users.updateCurrent', [
     'url' => '/api/users',
     'method' => 'PUT',
-    'controller' => ['app\controllers\UsersController', 'updateCurrentAuth'],
+    'controller' => ['app\controllers\UsersController', 'updateCurrent'],
     'filters' => [
         'permission' => 'isAuth'
     ]
@@ -80,7 +82,10 @@ Router::add('books.index', [
 Router::add('books.show', [
     'url' => '/api/books/:id',
     'method' => 'GET',
-    'controller' => ['app\controllers\BooksController', 'show']
+    'controller' => ['app\controllers\BooksController', 'show'],
+    'filters' => [
+        'paramValidation' => 'exists:books:id'
+    ]
 ]);
 
 Router::add('books.store', [
@@ -97,7 +102,8 @@ Router::add('books.storeAuthors', [
     'method' => 'POST',
     'controller' => ['app\controllers\BooksController', 'storeAuthors'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:books:id'
     ]
 ]);
 
@@ -106,7 +112,8 @@ Router::add('books.storeGenres', [
     'method' => 'POST',
     'controller' => ['app\controllers\BooksController', 'storeGenres'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:books:id'
     ]
 ]);
 
@@ -115,7 +122,8 @@ Router::add('books.storeImage', [
     'method' => 'POST',
     'controller' => ['app\controllers\BooksController', 'storeImage'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:books:id'
     ]
 ]);
 
@@ -124,7 +132,8 @@ Router::add('books.update', [
     'method' => 'PUT',
     'controller' => ['app\controllers\BooksController', 'update'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:books:id'
     ]
 ]);
 
@@ -133,7 +142,8 @@ Router::add('books.delete', [
     'method' => 'DELETE',
     'controller' => ['app\controllers\BooksController', 'delete'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:books:id'
     ]
 ]);
 
@@ -147,7 +157,10 @@ Router::add('authors.index', [
 Router::add('authors.show', [
     'url' => '/api/authors/:id',
     'method' => 'GET',
-    'controller' => ['app\controllers\AuthorsController', 'show']
+    'controller' => ['app\controllers\AuthorsController', 'show'],
+    'filters' => [
+        'paramValidation' => 'exists:authors:id'
+    ]
 ]);
 
 Router::add('authors.store', [
@@ -164,7 +177,8 @@ Router::add('authors.update', [
     'method' => 'PUT',
     'controller' => ['app\controllers\AuthorsController', 'update'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:authors:id'
     ]
 ]);
 
@@ -173,7 +187,8 @@ Router::add('authors.delete', [
     'method' => 'DELETE',
     'controller' => ['app\controllers\AuthorsController', 'delete'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:authors:id'
     ]
 ]);
 
@@ -187,7 +202,10 @@ Router::add('genres.index', [
 Router::add('genres.show', [
     'url' => '/api/genres/:id',
     'method' => 'GET',
-    'controller' => ['app\controllers\GenresController', 'show']
+    'controller' => ['app\controllers\GenresController', 'show'],
+    'filters' => [
+        'paramValidation' => 'exists:genres:id'
+    ]
 ]);
 
 Router::add('genres.store', [
@@ -204,7 +222,8 @@ Router::add('genres.update', [
     'method' => 'PUT',
     'controller' => ['app\controllers\GenresController', 'update'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:genres:id'
     ]
 ]);
 
@@ -213,7 +232,8 @@ Router::add('genres.delete', [
     'method' => 'DELETE',
     'controller' => ['app\controllers\GenresController', 'delete'],
     'filters' => [
-        'permission' => 'isAdmin'
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:genres:id'
     ]
 ]);
 

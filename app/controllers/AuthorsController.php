@@ -30,24 +30,15 @@ class AuthorsController
     {
         $author = $this->authorsModel->getAuthorById($id);
 
-        if (count($author) === 0)
-        {
-            return View::render([
-                'text' => "Author with id '$id' not found."
-            ], 404);
-        }
-
         return View::render([
             'data' => $author
         ]);
     }
 
     public function store()
-    {
-        $dbPrefix = $this->authorsModel->getDbPrefix();
-        
+    {   
         $validationErrors = Validator::validate([
-            'name' => "required|unique:{$dbPrefix}authors:name"
+            'name' => "required|unique:authors:name"
         ]);
 
         if (count($validationErrors) > 0)
@@ -69,19 +60,8 @@ class AuthorsController
 
     public function update($id)
     {
-        $author = $this->authorsModel->getAuthorById($id);
-
-        if (count($author) === 0)
-        {
-            return View::render([
-                'text' => "Author with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->authorsModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'name' => "required|unique:{$dbPrefix}authors:name:{$id}"
+            'name' => "required|unique:authors:name:{$id}"
         ]);
 
         if (count($validationErrors) > 0)
@@ -103,19 +83,10 @@ class AuthorsController
 
     public function delete($id)
     {
-        $author = $this->authorsModel->getAuthorById($id);
-
-        if (count($author) === 0)
-        {
-            return View::render([
-                'text' => "Author with id '$id' not found."
-            ], 404);
-        }
-
         $this->authorsModel->deleteAuthor($id);
 
         return View::render([
-            'text' => "Author '{$author[0]['name']}' was successfully deleted."
+            'text' => "Author with id '{$id}' was successfully deleted."
         ]);
     }
 }

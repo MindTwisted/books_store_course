@@ -6,9 +6,9 @@ class AuthorsModel extends Model
 {
     public function getAllAuthors()
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $authors = $this->queryBuilder->table("{$dbPrefix}authors")
+        $authors = self::$builder->table("{$dbPrefix}authors")
             ->fields(['id', 'name'])
             ->groupBy(['id'])
             ->select()
@@ -19,9 +19,9 @@ class AuthorsModel extends Model
 
     public function getAuthorById($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $author = $this->queryBuilder->table("{$dbPrefix}authors")
+        $author = self::$builder->table("{$dbPrefix}authors")
             ->fields(['id', 'name'])
             ->where(['id', '=', $id])
             ->select()
@@ -32,9 +32,9 @@ class AuthorsModel extends Model
 
     public function addAuthor($name)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}authors")
+        return self::$builder->table("{$dbPrefix}authors")
             ->fields(['name'])
             ->values([$name])
             ->insert()
@@ -43,9 +43,9 @@ class AuthorsModel extends Model
 
     public function updateAuthor($id, $name)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}authors")
+        return self::$builder->table("{$dbPrefix}authors")
             ->fields(['name'])
             ->values([$name])
             ->where(['id', '=', $id])
@@ -55,9 +55,9 @@ class AuthorsModel extends Model
 
     public function deleteAuthor($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}authors")
+        return self::$builder->table("{$dbPrefix}authors")
             ->where(['id', '=', $id])
             ->delete()
             ->run();

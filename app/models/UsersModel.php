@@ -6,9 +6,9 @@ class UsersModel extends Model
 {
     public function getUserByEmail($email)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $user = $this->queryBuilder->table("{$dbPrefix}users")
+        $user = self::$builder->table("{$dbPrefix}users")
             ->fields(['*'])
             ->where(['email', '=', $email])
             ->limit(1)
@@ -20,9 +20,9 @@ class UsersModel extends Model
 
     public function getAllUsers()
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $users = $this->queryBuilder->table("{$dbPrefix}users")
+        $users = self::$builder->table("{$dbPrefix}users")
             ->fields(['id', 'name', 'email', 'role', 'discount'])
             ->select()
             ->run();
@@ -32,9 +32,9 @@ class UsersModel extends Model
 
     public function getUserById($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $user = $this->queryBuilder->table("{$dbPrefix}users")
+        $user = self::$builder->table("{$dbPrefix}users")
             ->fields(['id', 'name', 'email', 'role', 'discount'])
             ->where(['id', '=', $id])
             ->limit(1)
@@ -46,9 +46,9 @@ class UsersModel extends Model
 
     public function addUser($name, $email, $password)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}users")
+        return self::$builder->table("{$dbPrefix}users")
             ->fields(['name', 'email', 'password'])
             ->values([$name, $email, password_hash($password, PASSWORD_BCRYPT)])
             ->insert()
@@ -57,9 +57,9 @@ class UsersModel extends Model
 
     public function updateUser($id, $name, $email, $password, $discount = null)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $this->queryBuilder->table("{$dbPrefix}users")
+        self::$builder->table("{$dbPrefix}users")
             ->fields(['name', 'email', 'password'])
             ->values([$name, $email, password_hash($password, PASSWORD_BCRYPT)])
             ->where(['id', '=', $id])
@@ -69,7 +69,7 @@ class UsersModel extends Model
 
         if (null !== $discount)
         {
-            $this->queryBuilder->table("{$dbPrefix}users")
+            self::$builder->table("{$dbPrefix}users")
                 ->fields(['discount'])
                 ->values([$discount])
                 ->where(['id', '=', $id])

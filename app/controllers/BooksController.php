@@ -31,13 +31,6 @@ class BooksController
     {
         $book = $this->booksModel->getBookById($id);
 
-        if (count($book) === 0)
-        {
-            return View::render([
-                'text' => "Book with id '$id' not found."
-            ], 404);
-        }
-
         return View::render([
             'data' => $book
         ]);
@@ -45,10 +38,8 @@ class BooksController
 
     public function store()
     {
-        $dbPrefix = $this->booksModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'title' => "required|unique:{$dbPrefix}books:title|alpha_dash",
+            'title' => "required|unique:books:title|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
             'discount' => "required|numeric|min:0"
@@ -76,19 +67,8 @@ class BooksController
 
     public function storeAuthors($id)
     {
-        $book = $this->booksModel->getBookById($id);
-
-        if (count($book) === 0)
-        {
-            return View::render([
-                'text' => "Book with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->booksModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'author' => "required|integer|min:1|exists:{$dbPrefix}authors:id"
+            'author' => "required|integer|min:1|exists:authors:id"
         ]);
 
         if (count($validationErrors) > 0)
@@ -110,19 +90,8 @@ class BooksController
 
     public function storeGenres($id)
     {
-        $book = $this->booksModel->getBookById($id);
-
-        if (count($book) === 0)
-        {
-            return View::render([
-                'text' => "Book with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->booksModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'genre' => "required|integer|min:1|exists:{$dbPrefix}genres:id"
+            'genre' => "required|integer|min:1|exists:genres:id"
         ]);
 
         if (count($validationErrors) > 0)
@@ -145,14 +114,6 @@ class BooksController
     public function storeImage($id)
     {
         $book = $this->booksModel->getBookById($id);
-
-        if (count($book) === 0)
-        {
-            return View::render([
-                'text' => "Book with id '$id' not found."
-            ], 404);
-        }
-        
         $image = File::get('image');
 
         if (!$image->isExistsInInput())
@@ -178,24 +139,13 @@ class BooksController
 
     public function update($id)
     {
-        $book = $this->booksModel->getBookById($id);
-
-        if (count($book) === 0)
-        {
-            return View::render([
-                'text' => "Book with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->booksModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'title' => "required|unique:{$dbPrefix}books:title:{$id}|alpha_dash",
+            'title' => "required|unique:books:title:{$id}|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
             'discount' => "required|numeric|min:0",
-            'author' => "integer|min:1|exists:{$dbPrefix}authors:id",
-            'genre' => "integer|min:1|exists:{$dbPrefix}genres:id"
+            'author' => "integer|min:1|exists:authors:id",
+            'genre' => "integer|min:1|exists:genres:id"
         ]);
 
         if (count($validationErrors) > 0)

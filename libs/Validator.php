@@ -7,7 +7,8 @@ use libs\Input;
 
 class Validator
 {
-    private static $builder = null;
+    private static $builder;
+    private static $dbPrefix = '';
     
     private static $rules = [
         "/^required$/" => [
@@ -51,21 +52,6 @@ class Validator
             'message' => 'This field requires only alphanumeric characters with dashes, underscores and spaces.',
         ],
     ];
-
-    private static function setBuilder()
-    {
-        if (null === self::$builder)
-        {
-            self::$builder = new QueryBuilder(
-                'mysql',
-                MYSQL_SETTINGS['host'],
-                MYSQL_SETTINGS['port'],
-                MYSQL_SETTINGS['database'],
-                MYSQL_SETTINGS['user'],
-                MYSQL_SETTINGS['password']
-            );
-        }
-    }
 
     private static function checkRequired($field)
     {
@@ -178,6 +164,8 @@ class Validator
             return true;
         }
 
+        $uTable = self::$dbPrefix . $uTable;
+
         $result = self::$builder->table($uTable)
                                 ->fields(['*'])
                                 ->where([$uField, '=', $field])
@@ -199,6 +187,8 @@ class Validator
         {
             return true;
         }
+        
+        $uTable = self::$dbPrefix . $uTable;
  
         if (!is_array($field))
         {
@@ -257,10 +247,18 @@ class Validator
         return !!preg_match('/^[\w\s\-]+$/', $field);
     }
 
+    public static function setDbPrefix($prefix)
+    {
+        self::$dbPrefix = $prefix;
+    }
+
+    public static function setBuilder(QueryBuilder $builder)
+    {
+        self::$builder = $builder;
+    }
+
     public static function validate($array)
     {
-        self::setBuilder();
-
         $errors = [];
 
         foreach ($array as $key => $val) 
@@ -294,6 +292,37 @@ class Validator
             if (count($messages)) 
             {
                 $errors[$key] = $messages;
+            }
+        }
+
+        return $errors;
+    }
+
+    public static function validateVariable($variable, $rules)
+    {
+        $errors = [];
+        $validateRules = explode('|', $rules);
+        
+        foreach (self::$rules as $rKey => $rVal) 
+        {
+            foreach ($validateRules as $vrKey => $vrVal) 
+            {
+                $matchResult = preg_match($rKey, $vrVal, $matches);
+
+                $first = isset($matches[1]) ? $matches[1] : null;
+                $second = isset($matches[2]) ? $matches[2] : null;
+                $third = isset($matches[3]) ? $matches[3] : null;
+
+                if ($matchResult) 
+                {
+                    $methodName = $rVal['method'];
+                    $message = $rVal['message'];
+
+                    if (!self::$methodName($variable, $first, $second, $third)) 
+                    {
+                        $errors[] = $message;
+                    }
+                }
             }
         }
 

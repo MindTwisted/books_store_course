@@ -3,6 +3,8 @@
 namespace libs;
 
 use libs\Auth;
+use libs\Validator;
+use libs\View;
 
 class Router
 {
@@ -35,6 +37,25 @@ class Router
     private static function isAuth()
     {
         Auth::check();
+    }
+
+    private static function checkParamValidation($route, $value)
+    {
+        if (!isset($route['filters']['paramValidation']))
+        {
+            return false;
+        }
+
+        $paramValidation = $route['filters']['paramValidation'];
+
+        $validationErrors = Validator::validateVariable($value, $paramValidation);
+
+        if (count($validationErrors) > 0)
+        {
+            return View::render([
+                'text' => "Not found."
+            ], 404);
+        }
     }
 
     public static function getUrl($routeName, $params = [])
@@ -91,11 +112,14 @@ class Router
             if ($val['method'] === $method
             && preg_match($pattern, $uri, $matches))
             {
+                $routeParam = count($matches) > 1 ? $matches[1] : null;
+
                 self::checkPermission($val);
+                self::checkParamValidation($val, $routeParam);
                 
                 return [
                     'settings' => $val,
-                    'param' => count($matches) > 1 ? $matches[1] : null,
+                    'param' => $routeParam,
                 ];
             }
         }

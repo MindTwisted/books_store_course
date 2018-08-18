@@ -30,25 +30,16 @@ class UsersController
     {
         $user = $this->usersModel->getUserById($id);
 
-        if (count($user) === 0)
-        {
-            return View::render([
-                'text' => "User with id '$id' not found."
-            ], 404);
-        }
-
         return View::render([
             'data' => $user
         ]);
     }
 
     public function store()
-    {
-        $dbPrefix = $this->usersModel->getDbPrefix();
-        
+    {    
         $validationErrors = Validator::validate([
             'name' => "required|minLength:6",
-            'email' => "required|email|unique:{$dbPrefix}users:email",
+            'email' => "required|email|unique:users:email",
             'password' => "required|minLength:6"
         ]);
 
@@ -73,20 +64,9 @@ class UsersController
 
     public function update($id)
     {
-        $user = $this->usersModel->getUserById($id);
-
-        if (count($user) === 0)
-        {
-            return View::render([
-                'text' => "User with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->usersModel->getDbPrefix();
-        
         $validationErrors = Validator::validate([
             'name' => "required|minLength:6",
-            'email' => "required|email|unique:{$dbPrefix}users:email:{$id}",
+            'email' => "required|email|unique:users:email:{$id}",
             'password' => "required|minLength:6",
             'discount' => "numeric"
         ]);
@@ -111,15 +91,13 @@ class UsersController
         ]);
     }
 
-    public function updateCurrentAuth()
+    public function updateCurrent()
     {
         $user = Auth::user();
-
-        $dbPrefix = $this->usersModel->getDbPrefix();
         
         $validationErrors = Validator::validate([
             'name' => "required|minLength:6",
-            'email' => "required|email|unique:{$dbPrefix}users:email:{$user['id']}",
+            'email' => "required|email|unique:users:email:{$user['id']}",
             'password' => "required|minLength:6"
         ]);
 

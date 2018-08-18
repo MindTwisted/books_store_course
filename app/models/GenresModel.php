@@ -6,9 +6,9 @@ class GenresModel extends Model
 {
     public function getAllGenres()
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $genres = $this->queryBuilder->table("{$dbPrefix}genres")
+        $genres = self::$builder->table("{$dbPrefix}genres")
             ->fields(['id', 'name'])
             ->groupBy(['id'])
             ->select()
@@ -19,9 +19,9 @@ class GenresModel extends Model
 
     public function getGenreById($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $genre = $this->queryBuilder->table("{$dbPrefix}genres")
+        $genre = self::$builder->table("{$dbPrefix}genres")
             ->fields(['id', 'name'])
             ->where(['id', '=', $id])
             ->select()
@@ -32,9 +32,9 @@ class GenresModel extends Model
 
     public function addGenre($name)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}genres")
+        return self::$builder->table("{$dbPrefix}genres")
             ->fields(['name'])
             ->values([$name])
             ->insert()
@@ -43,9 +43,9 @@ class GenresModel extends Model
 
     public function updateGenre($id, $name)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}genres")
+        return self::$builder->table("{$dbPrefix}genres")
             ->fields(['name'])
             ->values([$name])
             ->where(['id', '=', $id])
@@ -55,9 +55,9 @@ class GenresModel extends Model
 
     public function deleteGenre($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        return $this->queryBuilder->table("{$dbPrefix}genres")
+        return self::$builder->table("{$dbPrefix}genres")
             ->where(['id', '=', $id])
             ->delete()
             ->run();

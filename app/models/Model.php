@@ -6,24 +6,16 @@ use libs\QueryBuilder\src\QueryBuilder;
 
 class Model
 {
-    private $dbPrefix;
-    protected $queryBuilder;
+    protected static $dbPrefix = '';
+    protected static $builder;
 
-    public function __construct()
+    public static function setDbPrefix($prefix)
     {
-        $this->queryBuilder = new QueryBuilder(
-            'mysql',
-            MYSQL_SETTINGS['host'],
-            MYSQL_SETTINGS['port'],
-            MYSQL_SETTINGS['database'],
-            MYSQL_SETTINGS['user'],
-            MYSQL_SETTINGS['password']
-        );
-        $this->dbPrefix = TABLE_PREFIX;
+        self::$dbPrefix = $prefix;
     }
 
-    public function getDbPrefix()
+    public static function setBuilder(QueryBuilder $builder)
     {
-        return $this->dbPrefix;
+        self::$builder = $builder;
     }
 }

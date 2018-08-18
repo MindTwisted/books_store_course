@@ -30,13 +30,6 @@ class GenresController
     {
         $genre = $this->genresModel->getGenreById($id);
 
-        if (count($genre) === 0)
-        {
-            return View::render([
-                'text' => "Genre with id '$id' not found."
-            ], 404);
-        }
-
         return View::render([
             'data' => $genre
         ]);
@@ -44,10 +37,8 @@ class GenresController
 
     public function store()
     {
-        $dbPrefix = $this->genresModel->getDbPrefix();
-        
         $validationErrors = Validator::validate([
-            'name' => "required|unique:{$dbPrefix}genres:name"
+            'name' => "required|unique:genres:name"
         ]);
 
         if (count($validationErrors) > 0)
@@ -69,19 +60,8 @@ class GenresController
 
     public function update($id)
     {
-        $genre = $this->genresModel->getGenreById($id);
-
-        if (count($genre) === 0)
-        {
-            return View::render([
-                'text' => "Genre with id '$id' not found."
-            ], 404);
-        }
-
-        $dbPrefix = $this->genresModel->getDbPrefix();
-
         $validationErrors = Validator::validate([
-            'name' => "required|unique:{$dbPrefix}genres:name:{$id}"
+            'name' => "required|unique:genres:name:{$id}"
         ]);
 
         if (count($validationErrors) > 0)
@@ -103,19 +83,10 @@ class GenresController
 
     public function delete($id)
     {
-        $genre = $this->genresModel->getGenreById($id);
-
-        if (count($genre) === 0)
-        {
-            return View::render([
-                'text' => "Genre with id '$id' not found."
-            ], 404);
-        }
-
         $this->genresModel->deleteGenre($id);
 
         return View::render([
-            'text' => "Genre '{$genre[0]['name']}' was successfully deleted."
+            'text' => "Genre with id '{$id}' was successfully deleted."
         ]);
     }
 }

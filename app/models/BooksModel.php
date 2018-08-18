@@ -13,7 +13,7 @@ class BooksModel extends Model
         $genre = Input::get('genre');
         $title = Input::get('title');
 
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
         $executeParams = [];
         $sqlQuery = "
@@ -58,7 +58,7 @@ class BooksModel extends Model
 
         $sqlQuery .= " GROUP BY {$dbPrefix}books.id";
 
-        $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
+        $books = self::$builder->raw($sqlQuery, $executeParams);
 
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -74,7 +74,7 @@ class BooksModel extends Model
 
     public function getBookById($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
         $executeParams = [];
         $sqlQuery = "
@@ -102,7 +102,7 @@ class BooksModel extends Model
         
         $executeParams[] = $id;
 
-        $books = $this->queryBuilder->raw($sqlQuery, $executeParams);
+        $books = self::$builder->raw($sqlQuery, $executeParams);
 
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -118,9 +118,9 @@ class BooksModel extends Model
 
     public function addBook($title, $description, $price, $discount)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
-        $this->queryBuilder->table("{$dbPrefix}books")
+        self::$builder->table("{$dbPrefix}books")
             ->fields(['title', 'description', 'price', 'discount'])
             ->values([$title, $description, $price, $discount])
             ->insert()
@@ -129,7 +129,7 @@ class BooksModel extends Model
 
     public function addAuthors($bookId, $author)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
         $this->deleteAuthors($bookId);
 
@@ -142,7 +142,7 @@ class BooksModel extends Model
                 $valuesArray[] = [+$bookId, +$row];
             }
 
-            $this->queryBuilder->table("{$dbPrefix}book_author")
+            self::$builder->table("{$dbPrefix}book_author")
                 ->fields(['book_id', 'author_id'])
                 ->values(...$valuesArray)
                 ->insert()
@@ -150,7 +150,7 @@ class BooksModel extends Model
         }
         else
         {
-            $this->queryBuilder->table("{$dbPrefix}book_author")
+            self::$builder->table("{$dbPrefix}book_author")
                 ->fields(['book_id', 'author_id'])
                 ->values([+$bookId, +$author])
                 ->insert()
@@ -160,7 +160,7 @@ class BooksModel extends Model
 
     public function addGenres($bookId, $genre)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
 
         $this->deleteGenres($bookId);
 
@@ -173,7 +173,7 @@ class BooksModel extends Model
                 $valuesArray[] = [+$bookId, +$row];
             }
 
-            $this->queryBuilder->table("{$dbPrefix}book_genre")
+            self::$builder->table("{$dbPrefix}book_genre")
                 ->fields(['book_id', 'genre_id'])
                 ->values(...$valuesArray)
                 ->insert()
@@ -181,7 +181,7 @@ class BooksModel extends Model
         }
         else
         {
-            $this->queryBuilder->table("{$dbPrefix}book_genre")
+            self::$builder->table("{$dbPrefix}book_genre")
                 ->fields(['book_id', 'genre_id'])
                 ->values([+$bookId, +$genre])
                 ->insert()
@@ -191,11 +191,11 @@ class BooksModel extends Model
 
     public function addImage($book, File $image)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
         $uploadedFileName = $image->move(STORAGE_PATH . '/images/books', $book['title']);
         $storageFilePath = "storage/images/books/$uploadedFileName";
 
-        $this->queryBuilder->table("{$dbPrefix}books")
+        self::$builder->table("{$dbPrefix}books")
             ->fields(['image_url'])
             ->values([$storageFilePath])
             ->where(['id', '=', $book['id']])
@@ -210,9 +210,9 @@ class BooksModel extends Model
 
     public function deleteAuthors($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
         
-        $this->queryBuilder->table("{$dbPrefix}book_author")
+        self::$builder->table("{$dbPrefix}book_author")
             ->where(['book_id', '=', $id])
             ->delete()
             ->run();
@@ -220,9 +220,9 @@ class BooksModel extends Model
 
     public function deleteGenres($id)
     {
-        $dbPrefix = $this->getDbPrefix();
+        $dbPrefix = self::$dbPrefix;
         
-        $this->queryBuilder->table("{$dbPrefix}book_genre")
+        self::$builder->table("{$dbPrefix}book_genre")
             ->where(['book_id', '=', $id])
             ->delete()
             ->run();
