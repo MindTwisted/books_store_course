@@ -1,22 +1,15 @@
 <?php
 
-require_once 'app/config/config.php';
-require_once 'bootstrap/autoload.php';
-
-use libs\QueryBuilder\src\QueryBuilder;
+require_once '../bootstrap/env.php';
+require_once '../app/config/config.php';
+require_once '../bootstrap/autoload.php';
+require_once '../bootstrap/start.php';
 
 // Set QueryBuilder instance
-$builderMySQL = new QueryBuilder(
-    'mysql',
-    MYSQL_SETTINGS['host'],
-    MYSQL_SETTINGS['port'],
-    MYSQL_SETTINGS['database'],
-    MYSQL_SETTINGS['user'],
-    MYSQL_SETTINGS['password']
-);
+$builderMySQL = $queryBuilder;
 
 // Get tables prefix from config
-$prefix = TABLE_PREFIX;
+$prefix = DB_TABLE_PREFIX;
 
 // Disable foreign key checks
 $builderMySQL->raw("SET FOREIGN_KEY_CHECKS=0");

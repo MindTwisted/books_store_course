@@ -8,20 +8,20 @@ use app\models\Model;
 
 $queryBuilder = new QueryBuilder(
     'mysql',
-    MYSQL_SETTINGS['host'],
-    MYSQL_SETTINGS['port'],
-    MYSQL_SETTINGS['database'],
-    MYSQL_SETTINGS['user'],
-    MYSQL_SETTINGS['password']
+    DB_HOST,
+    DB_PORT,
+    DB_DATABASE,
+    DB_USER,
+    DB_PASSWORD
 );
 
-Model::setDbPrefix(TABLE_PREFIX);
+Model::setDbPrefix(DB_TABLE_PREFIX);
 Model::setBuilder($queryBuilder);
 
-Validator::setDbPrefix(TABLE_PREFIX);
+Validator::setDbPrefix(DB_TABLE_PREFIX);
 Validator::setBuilder($queryBuilder);
 
-Auth::setDbPrefix(TABLE_PREFIX);
+Auth::setDbPrefix(DB_TABLE_PREFIX);
 Auth::setBuilder($queryBuilder);
 Auth::setTokenExpiresTime(AUTH_TOKEN_EXPIRES);
 

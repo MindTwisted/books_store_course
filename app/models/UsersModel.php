@@ -59,23 +59,20 @@ class UsersModel extends Model
     {
         $dbPrefix = self::$dbPrefix;
 
+        $fields = null === $discount ?
+            ['name', 'email', 'password'] :
+            ['name', 'email', 'password', 'discount'];
+
+        $values = null === $discount ?
+            [$name, $email, password_hash($password, PASSWORD_BCRYPT)] :
+            [$name, $email, password_hash($password, PASSWORD_BCRYPT), $discount];
+
         self::$builder->table("{$dbPrefix}users")
-            ->fields(['name', 'email', 'password'])
-            ->values([$name, $email, password_hash($password, PASSWORD_BCRYPT)])
+            ->fields($fields)
+            ->values($values)
             ->where(['id', '=', $id])
             ->limit(1)
             ->update()
             ->run();
-
-        if (null !== $discount)
-        {
-            self::$builder->table("{$dbPrefix}users")
-                ->fields(['discount'])
-                ->values([$discount])
-                ->where(['id', '=', $id])
-                ->limit(1)
-                ->update()
-                ->run();
-        }
     }
 }
