@@ -8,23 +8,11 @@ use libs\View;
 class Auth
 {
     private static $builder = null;
+    private static $dbPrefix = '';
+    private static $tokenExpiresTime = 3600;
     private static $user = null;
-    private $instanceUser = null;
 
-    private static function setBuilder()
-    {
-        if (null === self::$builder)
-        {
-            self::$builder = new QueryBuilder(
-                'mysql',
-                MYSQL_SETTINGS['host'],
-                MYSQL_SETTINGS['port'],
-                MYSQL_SETTINGS['database'],
-                MYSQL_SETTINGS['user'],
-                MYSQL_SETTINGS['password']
-            );
-        }
-    }
+    private $instanceUser = null;
 
     private function isAdmin()
     {
@@ -34,6 +22,21 @@ class Auth
     public function __construct($user)
     {
         $this->instanceUser = $user;
+    }
+
+    public static function setDbPrefix($prefix)
+    {
+        self::$dbPrefix = $prefix;
+    }
+
+    public static function setBuilder(QueryBuilder $builder)
+    {
+        self::$builder = $builder;
+    }
+
+    public static function setTokenExpiresTime($time)
+    {
+        self::$tokenExpiresTime = $time;
     }
 
     public function checkAdmin()
@@ -50,12 +53,10 @@ class Auth
 
     public static function login($user)
     {
-        self::setBuilder();
-
         $token = bin2hex(openssl_random_pseudo_bytes(50));
-        $expiresAt = date ("Y-m-d H:i:s", time() + AUTH_TOKEN_EXPIRES);
+        $expiresAt = date ("Y-m-d H:i:s", time() + self::$tokenExpiresTime);
 
-        self::$builder->table(TABLE_PREFIX . 'auth_tokens')
+        self::$builder->table(self::$dbPrefix . 'auth_tokens')
             ->fields(['user_id', 'token', 'expires_at'])
             ->values([$user['id'], $token, $expiresAt])
             ->insert()
@@ -66,9 +67,7 @@ class Auth
 
     public static function logout($user)
     {
-        self::setBuilder();
-
-        self::$builder->table(TABLE_PREFIX . 'auth_tokens')
+        self::$builder->table(self::$dbPrefix . 'auth_tokens')
             ->where(['user_id', '=', $user['id']])
             ->delete()
             ->run();
@@ -81,8 +80,6 @@ class Auth
 
     public static function check()
     {
-        self::setBuilder();
-
         $headers = getallheaders();
         $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : null;
 
@@ -97,7 +94,7 @@ class Auth
         $token = isset($token[1]) ? $token[1] : '';
         $datetimeNow = date ("Y-m-d H:i:s", time());
 
-        $authToken = self::$builder->table(TABLE_PREFIX . 'auth_tokens')
+        $authToken = self::$builder->table(self::$dbPrefix . 'auth_tokens')
             ->fields(['user_id', 'token'])
             ->where(['token', '=', $token])
             ->andWhere(['expires_at', '>', $datetimeNow])
@@ -111,7 +108,7 @@ class Auth
             ], 401);
         }
         
-        $user = self::$builder->table(TABLE_PREFIX . 'users')
+        $user = self::$builder->table(self::$dbPrefix . 'users')
             ->fields(['id', 'name', 'email', 'role', 'discount'])
             ->where(['id', '=', $authToken[0]['user_id']])
             ->select()

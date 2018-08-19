@@ -4,7 +4,7 @@ namespace libs;
 
 class View
 {
-    private static $renderType = DEFAULT_VIEW_TYPE;
+    private static $renderType = 'json';
     private static $availableRenderTypes = ['json', 'html', 'txt', 'xml'];
     private static $status = [
         200 => '200 OK',
@@ -95,7 +95,7 @@ class View
 
     public static function setRenderType($type)
     {
-        self::$renderType = in_array($type, self::$availableRenderTypes) ? $type : DEFAULT_VIEW_TYPE;
+        self::$renderType = in_array($type, self::$availableRenderTypes) ? $type : 'json';
     }
 
     public static function render($data, $code = 200)
