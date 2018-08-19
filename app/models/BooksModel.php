@@ -2,17 +2,12 @@
 
 namespace app\models;
 
-use libs\Input;
 use libs\File;
 
 class BooksModel extends Model
 {
-    public function getAllBooks()
+    public function getAllBooks($author, $genre, $title)
     {
-        $author = Input::get('author');
-        $genre = Input::get('genre');
-        $title = Input::get('title');
-
         $dbPrefix = self::$dbPrefix;
 
         $executeParams = [];
@@ -40,13 +35,13 @@ class BooksModel extends Model
 
         if ($author && strlen($author) > 0)
         {
-            $sqlQuery .= " AND {$dbPrefix}authors.name = ?";
+            $sqlQuery .= " AND {$dbPrefix}authors.id = ?";
             $executeParams[] = $author;
         }
 
         if ($genre && strlen($genre) > 0)
         {
-            $sqlQuery .= " AND {$dbPrefix}genres.name = ?";
+            $sqlQuery .= " AND {$dbPrefix}genres.id = ?";
             $executeParams[] = $genre;
         }
 
@@ -59,9 +54,7 @@ class BooksModel extends Model
         $sqlQuery .= " GROUP BY {$dbPrefix}books.id";
 
         $books = self::$builder->raw($sqlQuery, $executeParams);
-
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
-
         $books = array_map(function($book) {
             $book['authors'] = explode(',', $book['authors']);
             $book['genres'] = explode(',', $book['genres']);
@@ -103,9 +96,7 @@ class BooksModel extends Model
         $executeParams[] = $id;
 
         $books = self::$builder->raw($sqlQuery, $executeParams);
-
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
-
         $books = array_map(function($book) {
             $book['authors'] = explode(',', $book['authors']);
             $book['genres'] = explode(',', $book['genres']);

@@ -20,7 +20,11 @@ class BooksController
 
     public function index()
     {
-        $books = $this->booksModel->getAllBooks();
+        $author = Input::get('author');
+        $genre = Input::get('genre');
+        $title = Input::get('title');
+
+        $books = $this->booksModel->getAllBooks($author, $genre, $title);
 
         return View::render([
             'data' => $books
