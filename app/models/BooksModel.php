@@ -206,6 +206,16 @@ class BooksModel extends Model
             ->run();
     }
 
+    public function deleteBook($id)
+    {
+        $dbPrefix = self::$dbPrefix;
+
+        self::$builder->table("{$dbPrefix}books")
+            ->where(['id', '=', $id])
+            ->delete()
+            ->run();
+    }
+
     public function deleteAuthors($id)
     {
         $dbPrefix = self::$dbPrefix;

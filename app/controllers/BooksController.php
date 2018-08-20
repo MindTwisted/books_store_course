@@ -173,6 +173,10 @@ class BooksController
 
     public function delete($id)
     {
-        var_dump("delete $id");
+        $this->booksModel->deleteBook($id);
+
+        return View::render([
+            'text' => "Book with id '$id' was successfully deleted."
+        ]);
     }
 }
