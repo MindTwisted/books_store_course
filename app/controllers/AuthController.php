@@ -2,11 +2,12 @@
 
 namespace app\controllers;
 
-use app\models\UsersModel;
 use libs\View;
 use libs\Auth;
 use libs\Validator;
 use libs\Input;
+
+use app\models\UsersModel;
 
 class AuthController
 {

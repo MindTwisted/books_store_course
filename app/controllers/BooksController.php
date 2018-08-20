@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use app\models\BooksModel;
 use libs\View;
-use libs\Auth;
 use libs\Validator;
 use libs\Input;
 use libs\File;
+
+use app\models\BooksModel;
 
 class BooksController
 {

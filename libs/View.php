@@ -13,6 +13,7 @@ class View
         403 => '403 Forbidden',
         404 => '404 Not Found',
         405 => '405 Method Not Allowed',
+        409 => '409 Conflict',
         422 => '422 Unprocessable Entity',
         500 => '500 Internal Server Error',
     ];

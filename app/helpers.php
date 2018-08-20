@@ -1,6 +1,10 @@
 <?php
 
-function dd($dump) {
-    var_dump($dump);
+function dd(...$dump) {
+    foreach ($dump as $line)
+    {
+        var_dump($line);
+    }
+    
     die();
 }

@@ -154,14 +154,14 @@ $builderMySQL->raw(
 $builderMySQL->raw(
     "CREATE TABLE {$prefix}cart (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                  book_id INT UNSIGNED,
                   user_id INT UNSIGNED,
+                  book_id INT UNSIGNED,
                   count INT UNSIGNED NOT NULL,
-                  FOREIGN KEY (book_id)
-                        REFERENCES {$prefix}books (id) 
-                        ON DELETE CASCADE,
                   FOREIGN KEY (user_id)
                         REFERENCES {$prefix}users (id)
+                        ON DELETE CASCADE,
+                  FOREIGN KEY (book_id)
+                        REFERENCES {$prefix}books (id) 
                         ON DELETE CASCADE
             )"
 );

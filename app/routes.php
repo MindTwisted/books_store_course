@@ -255,6 +255,43 @@ Router::add('genres.delete', [
     ]
 ]);
 
+// Cart routes
+Router::add('cart.index', [
+    'url' => '/api/cart',
+    'method' => 'GET',
+    'controller' => ['app\controllers\CartController', 'index'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('cart.store', [
+    'url' => '/api/cart',
+    'method' => 'POST',
+    'controller' => ['app\controllers\CartController', 'store'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('cart.update', [
+    'url' => '/api/cart',
+    'method' => 'PUT',
+    'controller' => ['app\controllers\CartController', 'update'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('cart.delete', [
+    'url' => '/api/cart',
+    'method' => 'DELETE',
+    'controller' => ['app\controllers\CartController', 'delete'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestUrl = '/' . implode('/', array_slice(explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]), 3));
 
