@@ -28,16 +28,16 @@ class AuthController
 
     public function store()
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'email' => "required|email",
             'password' => "required"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 

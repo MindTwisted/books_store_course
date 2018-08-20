@@ -42,18 +42,18 @@ class BooksController
 
     public function store()
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'title' => "required|unique:books:title|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
             'discount' => "required|numeric|min:0"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -71,15 +71,15 @@ class BooksController
 
     public function storeAuthors($id)
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'author' => "required|integer|min:1|exists:authors:id"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -94,15 +94,15 @@ class BooksController
 
     public function storeGenres($id)
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'genre' => "required|integer|min:1|exists:genres:id"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -143,8 +143,8 @@ class BooksController
 
     public function update($id)
     {
-        $validationErrors = Validator::validate([
-            'title' => "required|unique:books:title:{$id}|alpha_dash",
+        $validator = Validator::make([
+            'title' => "required|unique:books:title:$id|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
             'discount' => "required|numeric|min:0",
@@ -152,11 +152,11 @@ class BooksController
             'genre' => "integer|min:1|exists:genres:id"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 

@@ -37,17 +37,17 @@ class UsersController
 
     public function store()
     {    
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'name' => "required|minLength:6",
             'email' => "required|email|unique:users:email",
             'password' => "required|minLength:6"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -64,18 +64,18 @@ class UsersController
 
     public function update($id)
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'name' => "required|minLength:6",
-            'email' => "required|email|unique:users:email:{$id}",
+            'email' => "required|email|unique:users:email:$id",
             'password' => "required|minLength:6",
             'discount' => "numeric"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -95,17 +95,17 @@ class UsersController
     {
         $user = Auth::user();
         
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'name' => "required|minLength:6",
             'email' => "required|email|unique:users:email:{$user['id']}",
             'password' => "required|minLength:6"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 

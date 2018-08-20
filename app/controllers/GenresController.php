@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\GenresModel;
+use app\models\BooksModel;
 use libs\View;
 use libs\Auth;
 use libs\Validator;
@@ -15,6 +16,7 @@ class GenresController
     public function __construct()
     {
         $this->genresModel = new GenresModel();
+        $this->booksModel = new BooksModel();
     }
 
     public function index()
@@ -35,17 +37,26 @@ class GenresController
         ]);
     }
 
+    public function showBooks($id)
+    {
+        $books = $this->booksModel->getAllBooks(null, $id);
+
+        return View::render([
+            'data' => $books
+        ]);
+    }
+
     public function store()
     {
-        $validationErrors = Validator::validate([
+        $validator = Validator::make([
             'name' => "required|unique:genres:name"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -60,15 +71,15 @@ class GenresController
 
     public function update($id)
     {
-        $validationErrors = Validator::validate([
-            'name' => "required|unique:genres:name:{$id}"
+        $validator = Validator::make([
+            'name' => "required|unique:genres:name:$id"
         ]);
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => 'The credentials you supplied were not correct.',
-                'data' => $validationErrors
+                'data' => $validator->errors()
             ], 422);
         }
 
@@ -86,7 +97,7 @@ class GenresController
         $this->genresModel->deleteGenre($id);
 
         return View::render([
-            'text' => "Genre with id '{$id}' was successfully deleted."
+            'text' => "Genre with id '$id' was successfully deleted."
         ]);
     }
 }

@@ -163,6 +163,15 @@ Router::add('authors.show', [
     ]
 ]);
 
+Router::add('authors.showBooks', [
+    'url' => '/api/authors/:id/books',
+    'method' => 'GET',
+    'controller' => ['app\controllers\AuthorsController', 'showBooks'],
+    'filters' => [
+        'paramValidation' => 'exists:authors:id'
+    ]
+]);
+
 Router::add('authors.store', [
     'url' => '/api/authors',
     'method' => 'POST',
@@ -203,6 +212,15 @@ Router::add('genres.show', [
     'url' => '/api/genres/:id',
     'method' => 'GET',
     'controller' => ['app\controllers\GenresController', 'show'],
+    'filters' => [
+        'paramValidation' => 'exists:genres:id'
+    ]
+]);
+
+Router::add('genres.showBooks', [
+    'url' => '/api/genres/:id/books',
+    'method' => 'GET',
+    'controller' => ['app\controllers\GenresController', 'showBooks'],
     'filters' => [
         'paramValidation' => 'exists:genres:id'
     ]

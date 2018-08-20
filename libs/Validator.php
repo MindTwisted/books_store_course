@@ -7,6 +7,7 @@ use libs\Input;
 
 class Validator
 {
+    private $errors;
     private static $builder;
     private static $dbPrefix = '';
     
@@ -247,6 +248,21 @@ class Validator
         return !!preg_match('/^[\w\s\-]+$/', $field);
     }
 
+    public function __construct($errors)
+    {
+        $this->errors = $errors;
+    }
+
+    public function fails()
+    {
+        return count($this->errors) > 0;
+    }
+
+    public function errors()
+    {
+        return $this->errors;
+    }
+
     public static function setDbPrefix($prefix)
     {
         self::$dbPrefix = $prefix;
@@ -257,8 +273,23 @@ class Validator
         self::$builder = $builder;
     }
 
-    public static function validate($array)
+    public static function make(...$args)
     {
+        if (count($args) > 1)
+        {
+            if (!is_array($args[0]) 
+                || !is_array($args[1]))
+            {
+                throw new \Exception("Validator 'make' method requires array type arguments.");
+            }
+
+            if (array_keys($args[0]) !== array_keys($args[1]))
+            {
+                throw new \Exception("Validator 'make' method requires variables array and rules array to have equal keys.");
+            }
+        }
+
+        $array = count($args) === 1 ? $args[0] : $args[1];
         $errors = [];
 
         foreach ($array as $key => $val) 
@@ -281,7 +312,9 @@ class Validator
                         $methodName = $rVal['method'];
                         $message = $rVal['message'];
 
-                        if (!self::$methodName(Input::get($key), $first, $second, $third)) 
+                        $fieldValue = count($args) === 1 ? Input::get($key) : $args[0][$key];
+
+                        if (!self::$methodName($fieldValue, $first, $second, $third)) 
                         {
                             $messages[] = $message;
                         }
@@ -295,37 +328,6 @@ class Validator
             }
         }
 
-        return $errors;
-    }
-
-    public static function validateVariable($variable, $rules)
-    {
-        $errors = [];
-        $validateRules = explode('|', $rules);
-        
-        foreach (self::$rules as $rKey => $rVal) 
-        {
-            foreach ($validateRules as $vrKey => $vrVal) 
-            {
-                $matchResult = preg_match($rKey, $vrVal, $matches);
-
-                $first = isset($matches[1]) ? $matches[1] : null;
-                $second = isset($matches[2]) ? $matches[2] : null;
-                $third = isset($matches[3]) ? $matches[3] : null;
-
-                if ($matchResult) 
-                {
-                    $methodName = $rVal['method'];
-                    $message = $rVal['message'];
-
-                    if (!self::$methodName($variable, $first, $second, $third)) 
-                    {
-                        $errors[] = $message;
-                    }
-                }
-            }
-        }
-
-        return $errors;
+        return new self($errors);
     }
 }

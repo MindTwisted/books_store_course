@@ -6,7 +6,7 @@ use libs\File;
 
 class BooksModel extends Model
 {
-    public function getAllBooks($author, $genre, $title)
+    public function getAllBooks($author = null, $genre = null, $title = null)
     {
         $dbPrefix = self::$dbPrefix;
 

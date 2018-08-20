@@ -48,9 +48,12 @@ class Router
 
         $paramValidation = $route['filters']['paramValidation'];
 
-        $validationErrors = Validator::validateVariable($value, $paramValidation);
+        $validator = Validator::make(
+            ['id' => $value],
+            ['id' => $paramValidation]
+        );
 
-        if (count($validationErrors) > 0)
+        if ($validator->fails())
         {
             return View::render([
                 'text' => "Not found."
