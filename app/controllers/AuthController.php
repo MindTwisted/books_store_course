@@ -44,38 +44,22 @@ class AuthController
         $email = Input::get('email');
         $password = Input::get('password');
 
-        $user = $this->usersModel->getUserByEmail($email);
+        $login = Auth::login($email, $password);
 
-        if (count($user) > 0)
-        {
-            $user = $user[0];
-            
-            if (password_verify(
-                $password,
-                $user['password'])
-            )
-            {
-                $token = Auth::login($user);
-
-                return View::render([
-                    'text' => "User '{$user['name']}' was successfully logged in.",
-                    'data' => [
-                        'token' => $token,
-                        'role' => $user['role']
-                    ]
-                ]);
-            }     
-        }  
         return View::render([
-            'text' => "The credentials you supplied were not correct."
-        ], 401);  
+            'text' => "User '{$login['name']}' was successfully logged in.",
+            'data' => [
+                'token' => $login['token'],
+                'role' => $login['role']
+            ]
+        ]);        
     }
 
     public function delete()
     {
         $user = Auth::user();
 
-        Auth::logout($user);
+        Auth::logout();
         
         return View::render([
             'text' => "User '{$user['name']}' was successfully logged out."

@@ -51,10 +51,26 @@ class Auth
         return true;
     }
 
-    public static function login($user)
+    public static function login($email, $password)
     {
+        $user = self::$builder->table(self::$dbPrefix . 'users')
+                    ->fields(['*'])
+                    ->where(['email', '=', $email])
+                    ->limit(1)
+                    ->select()
+                    ->run();
+        $user = isset($user[0]) ? $user[0] : null;
+
+        if (null === $user 
+            || !password_verify($password, $user['password']))
+        {
+            return View::render([
+                'text' => "The credentials you supplied were not correct."
+            ], 401);   
+        }
+            
         $token = bin2hex(openssl_random_pseudo_bytes(50));
-        $expiresAt = date ("Y-m-d H:i:s", time() + self::$tokenExpiresTime);
+        $expiresAt = date("Y-m-d H:i:s", time() + self::$tokenExpiresTime);
 
         self::$builder->table(self::$dbPrefix . 'auth_tokens')
             ->fields(['user_id', 'token', 'expires_at'])
@@ -62,11 +78,17 @@ class Auth
             ->insert()
             ->run();
 
-        return $token;
+        return [
+            'name' => $user['name'],
+            'role' => $user['role'],
+            'token' => $token
+        ];
     }
 
-    public static function logout($user)
+    public static function logout()
     {
+        $user = self::user();
+        
         self::$builder->table(self::$dbPrefix . 'auth_tokens')
             ->where(['user_id', '=', $user['id']])
             ->delete()
@@ -83,36 +105,27 @@ class Auth
         $headers = getallheaders();
         $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : null;
 
-        if ($authHeader === null)
+        if (null === $authHeader 
+            || !preg_match('/^bearer\s\w+$/i', $authHeader))
         {
             return View::render([
                 'text' => "You must be a authenticated user to process this request."
             ], 401);
         }
 
-        $token = explode(' ', $authHeader);
-        $token = isset($token[1]) ? $token[1] : '';
-        $datetimeNow = date ("Y-m-d H:i:s", time());
+        $token = explode(' ', $authHeader)[1];
+        $datetimeNow = date("Y-m-d H:i:s", time());
 
-        $authToken = self::$builder->table(self::$dbPrefix . 'auth_tokens')
-            ->fields(['user_id', 'token'])
-            ->where(['token', '=', $token])
-            ->andWhere(['expires_at', '>', $datetimeNow])
-            ->select()
-            ->run();
+        $usersTable = self::$dbPrefix . 'users';
+        $authTable = self::$dbPrefix . 'auth_tokens';
 
-        if (count($authToken) === 0)
-        {
-            return View::render([
-                'text' => "You must be a authenticated user to process this request."
-            ], 401);
-        }
-        
-        $user = self::$builder->table(self::$dbPrefix . 'users')
-            ->fields(['id', 'name', 'email', 'role', 'discount'])
-            ->where(['id', '=', $authToken[0]['user_id']])
-            ->select()
-            ->run();
+        $user = self::$builder->table($usersTable)
+                    ->join($authTable, [$usersTable.'.id', $authTable.'.user_id'])
+                    ->fields([$usersTable.'.id', 'name', 'email', 'role', 'discount'])
+                    ->where(['token', '=', $token])
+                    ->andWhere(['expires_at', '>', $datetimeNow])
+                    ->select()
+                    ->run();
 
         if (count($user) === 0)
         {

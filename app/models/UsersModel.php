@@ -4,20 +4,6 @@ namespace app\models;
 
 class UsersModel extends Model
 {
-    public function getUserByEmail($email)
-    {
-        $dbPrefix = self::$dbPrefix;
-
-        $user = self::$builder->table("{$dbPrefix}users")
-            ->fields(['*'])
-            ->where(['email', '=', $email])
-            ->limit(1)
-            ->select()
-            ->run();
-
-        return $user;
-    }
-
     public function getAllUsers()
     {
         $dbPrefix = self::$dbPrefix;
