@@ -62,10 +62,11 @@ class BooksController
         $price = Input::get('price');
         $discount = Input::get('discount');
 
-        $this->booksModel->addBook($title, $description, $price, $discount);
+        $id = $this->booksModel->addBook($title, $description, $price, $discount);
 
         return View::render([
-            'text' => "Book '$title' was successfully added."
+            'text' => "Book '$title' was successfully added.",
+            'data' => ['id' => $id]
         ]);
     }
 
@@ -147,9 +148,7 @@ class BooksController
             'title' => "required|unique:books:title:$id|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
-            'discount' => "required|numeric|min:0",
-            'author' => "integer|min:1|exists:authors:id",
-            'genre' => "integer|min:1|exists:genres:id"
+            'discount' => "required|numeric|min:0"
         ]);
 
         if ($validator->fails())
@@ -164,10 +163,8 @@ class BooksController
         $description = Input::get('description');
         $price = Input::get('price');
         $discount = Input::get('discount');
-        $author = Input::get('author');
-        $genre = Input::get('genre');
 
-        $this->booksModel->updateBook($id, $title, $description, $price, $discount, $author, $genre);
+        $this->booksModel->updateBook($id, $title, $description, $price, $discount);
 
         return View::render([
             'text' => "Book '$title' was successfully updated."

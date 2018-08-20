@@ -1097,9 +1097,11 @@ class QueryBuilder
                 $returnValue = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 break;
             case 'insert':
+                $returnValue = $this->pdo->lastInsertId();
+                break;
             case 'delete':
             case 'update':
-                $returnValue = $stmt->rowCount();
+                $returnValue = $stmt->rowCount() > 0;
                 break;
         }
 

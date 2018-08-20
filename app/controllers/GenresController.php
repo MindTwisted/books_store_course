@@ -62,10 +62,11 @@ class GenresController
 
         $name = Input::get('name');
 
-        $this->genresModel->addGenre($name);
+        $id = $this->genresModel->addGenre($name);
 
         return View::render([
-            'text' => "Genre '$name' was successfully added."
+            'text' => "Genre '$name' was successfully added.",
+            'data' => ['id' => $id]
         ]);
     }
 

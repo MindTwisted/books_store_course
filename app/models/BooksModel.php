@@ -111,11 +111,11 @@ class BooksModel extends Model
     {
         $dbPrefix = self::$dbPrefix;
 
-        self::$builder->table("{$dbPrefix}books")
-            ->fields(['title', 'description', 'price', 'discount'])
-            ->values([$title, $description, $price, $discount])
-            ->insert()
-            ->run();
+        return self::$builder->table("{$dbPrefix}books")
+                    ->fields(['title', 'description', 'price', 'discount'])
+                    ->values([$title, $description, $price, $discount])
+                    ->insert()
+                    ->run();
     }
 
     public function addAuthors($bookId, $author)
@@ -194,9 +194,16 @@ class BooksModel extends Model
             ->run();
     }
 
-    public function updateBook($id, $title, $description, $price, $discount, $author, $genre)
+    public function updateBook($id, $title, $description, $price, $discount)
     {
-        var_dump('update book from model');
+        $dbPrefix = self::$dbPrefix;
+
+        self::$builder->table("{$dbPrefix}books")
+            ->fields(['title', 'description', 'price', 'discount'])
+            ->values([$title, $description, $price, $discount])
+            ->where(['id', '=', $id])
+            ->update()
+            ->run();
     }
 
     public function deleteAuthors($id)

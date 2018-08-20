@@ -45,7 +45,7 @@ class GenresModel extends Model
     {
         $dbPrefix = self::$dbPrefix;
 
-        return self::$builder->table("{$dbPrefix}genres")
+        self::$builder->table("{$dbPrefix}genres")
             ->fields(['name'])
             ->values([$name])
             ->where(['id', '=', $id])
@@ -57,7 +57,7 @@ class GenresModel extends Model
     {
         $dbPrefix = self::$dbPrefix;
 
-        return self::$builder->table("{$dbPrefix}genres")
+        self::$builder->table("{$dbPrefix}genres")
             ->where(['id', '=', $id])
             ->delete()
             ->run();

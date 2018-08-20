@@ -62,10 +62,11 @@ class AuthorsController
 
         $name = Input::get('name');
 
-        $this->authorsModel->addAuthor($name);
+        $id = $this->authorsModel->addAuthor($name);
 
         return View::render([
-            'text' => "Author '$name' was successfully added."
+            'text' => "Author '$name' was successfully added.",
+            'data' => ['id' => $id]
         ]);
     }
 

@@ -35,17 +35,17 @@ class AuthorsModel extends Model
         $dbPrefix = self::$dbPrefix;
 
         return self::$builder->table("{$dbPrefix}authors")
-            ->fields(['name'])
-            ->values([$name])
-            ->insert()
-            ->run();
+                    ->fields(['name'])
+                    ->values([$name])
+                    ->insert()
+                    ->run();
     }
 
     public function updateAuthor($id, $name)
     {
         $dbPrefix = self::$dbPrefix;
 
-        return self::$builder->table("{$dbPrefix}authors")
+        self::$builder->table("{$dbPrefix}authors")
             ->fields(['name'])
             ->values([$name])
             ->where(['id', '=', $id])
@@ -57,7 +57,7 @@ class AuthorsModel extends Model
     {
         $dbPrefix = self::$dbPrefix;
 
-        return self::$builder->table("{$dbPrefix}authors")
+        self::$builder->table("{$dbPrefix}authors")
             ->where(['id', '=', $id])
             ->delete()
             ->run();
