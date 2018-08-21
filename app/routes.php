@@ -292,6 +292,16 @@ Router::add('cart.delete', [
     ]
 ]);
 
+// Orders routes
+Router::add('orders.store', [
+    'url' => '/api/orders',
+    'method' => 'POST',
+    'controller' => ['app\controllers\OrdersController', 'store'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestUrl = '/' . implode('/', array_slice(explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]), 3));
 

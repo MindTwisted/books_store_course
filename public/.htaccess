@@ -4,8 +4,8 @@
 
 RewriteEngine On 
 
-RewriteBase /~user5/books-store-server/
-# RewriteBase /books_store_server/public/
+# RewriteBase /~user5/books-store-server/
+RewriteBase /books-store/server/
 
 RewriteCond %{REQUEST_FILENAME} !-f 
 RewriteCond %{REQUEST_FILENAME} !-d

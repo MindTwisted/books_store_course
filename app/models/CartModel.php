@@ -25,13 +25,42 @@ class CartModel extends Model
 
         $cartTable = "{$dbPrefix}cart";
         $booksTable = "{$dbPrefix}books";
+        $separator = '---';
 
-        return self::$builder->table($cartTable)
+        self::$builder->raw('SET SESSION group_concat_max_len = 1000000');
+
+        $cart = self::$builder->table($cartTable)
                     ->join($booksTable, [$cartTable.'.book_id', $booksTable.'.id'])
-                    ->fields(['count', 'title', 'description', 'image_url', 'price', 'discount'])
+                    ->fields([
+                        $cartTable.'.id',
+                        'count',
+                        "GROUP_CONCAT({$booksTable}.id, '$separator', title, '$separator', description, '$separator', image_url, '$separator', price, '$separator', discount) AS book"
+                    ])
                     ->where(['user_id', '=', $userId])
+                    ->groupBy([$cartTable.'.id', 'count'])
                     ->select()
                     ->run();
+
+        $cart = array_map(function($item) use ($separator) {
+            unset($item['id']);
+
+            $item['book'] = explode($separator, $item['book']);
+
+            $book = [
+                'id' => $item['book'][0],
+                'title' => $item['book'][1],
+                'description' => $item['book'][2],
+                'image_url' => $item['book'][3],
+                'price' => $item['book'][4],
+                'discount' => $item['book'][5]
+            ];
+
+            $item['book'] = $book;
+
+            return $item;
+        }, $cart);
+
+        return $cart;           
     }
 
     public function addToCart($userId, $bookId, $count)

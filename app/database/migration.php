@@ -117,12 +117,12 @@ $builderMySQL->raw(
     "CREATE TABLE {$prefix}orders (
                   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                   user_id INT UNSIGNED,
-                  payment_types_id INT UNSIGNED,
+                  payment_type_id INT UNSIGNED,
                   status ENUM('in_process', 'done') DEFAULT 'in_process',
                   total_discount DECIMAL(8,2) NOT NULL,
                   total_price DECIMAL(8,2) NOT NULL,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  FOREIGN KEY (payment_types_id)
+                  FOREIGN KEY (payment_type_id)
                         REFERENCES {$prefix}payment_types (id) 
                         ON DELETE SET NULL,
                   FOREIGN KEY (user_id)
