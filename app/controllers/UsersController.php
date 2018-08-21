@@ -8,14 +8,17 @@ use libs\Validator;
 use libs\Input;
 
 use app\models\UsersModel;
+use app\models\OrdersModel;
 
 class UsersController
 {
     protected $usersModel;
+    protected $ordersModel;
 
     public function __construct()
     {
         $this->usersModel = new UsersModel();
+        $this->ordersModel = new OrdersModel();
     }
 
     public function index()
@@ -33,6 +36,15 @@ class UsersController
 
         return View::render([
             'data' => $user
+        ]);
+    }
+
+    public function showOrders($id)
+    {
+        $orders = $this->ordersModel->getOrders(null, $id);
+
+        return View::render([
+            'data' => $orders
         ]);
     }
 

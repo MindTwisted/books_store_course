@@ -135,6 +135,18 @@ class OrdersModel extends Model
         return $orderId;
     }
 
+    public function updateOrder($id, $status)
+    {
+        $dbPrefix = self::$dbPrefix;
+
+        self::$builder->table("{$dbPrefix}orders")
+            ->fields(['status'])
+            ->values([$status])
+            ->where(['id', '=', $id])
+            ->update()
+            ->run();
+    }
+
     public function deleteOrder($id)
     {
         $dbPrefix = self::$dbPrefix;

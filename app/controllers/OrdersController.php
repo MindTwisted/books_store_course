@@ -84,6 +84,29 @@ class OrdersController
         ]);
     }
 
+    public function update($id)
+    {
+        $validator = Validator::make([
+            'status' => "required|included:(in_process, done)"
+        ]);
+
+        if ($validator->fails())
+        {
+            return View::render([
+                'text' => 'The credentials you supplied were not correct.',
+                'data' => $validator->errors()
+            ], 422);
+        }
+
+        $status = Input::get('status');
+
+        $this->ordersModel->updateOrder($id, $status);
+
+        return View::render([
+            'text' => "Order with id '$id' was successfully updated."
+        ]);
+    }
+
     public function delete($id)
     {
         $this->ordersModel->deleteOrder($id);

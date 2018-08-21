@@ -47,6 +47,16 @@ Router::add('users.show', [
     ]
 ]);
 
+Router::add('users.showOrders', [
+    'url' => '/api/users/:id/orders',
+    'method' => 'GET',
+    'controller' => ['app\controllers\UsersController', 'showOrders'],
+    'filters' => [
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:users:id'
+    ]
+]);
+
 Router::add('users.store', [
     'url' => '/api/users',
     'method' => 'POST',
@@ -318,6 +328,16 @@ Router::add('orders.store', [
     'controller' => ['app\controllers\OrdersController', 'store'],
     'filters' => [
         'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('orders.update', [
+    'url' => '/api/orders/:id',
+    'method' => 'PUT',
+    'controller' => ['app\controllers\OrdersController', 'update'],
+    'filters' => [
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:orders:id'
     ]
 ]);
 
