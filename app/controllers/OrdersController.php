@@ -21,6 +21,35 @@ class OrdersController
         $this->cartModel = new CartModel();
     }
 
+    public function index()
+    {
+        $user = Auth::user();
+
+        if ('admin' !== $user['role'])
+        {
+            $orders = $this->ordersModel->getOrders(null, $user['id']);
+
+            return View::render([
+                'data' => $orders
+            ]);
+        }
+
+        $orders = $this->ordersModel->getOrders();
+
+        return View::render([
+            'data' => $orders
+        ]);
+    }
+
+    public function show($id)
+    {
+        $order = $this->ordersModel->getOrders($id);
+
+        return View::render([
+            'data' => $order
+        ]);
+    }
+
     public function store()
     {
         $user = Auth::user();
@@ -52,6 +81,15 @@ class OrdersController
 
         return View::render([
             'text' => "Order with id '$orderId' was successfully added."
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $this->ordersModel->deleteOrder($id);
+
+        return View::render([
+            'text' => "Order with id '$id' was successfully deleted."
         ]);
     }
 }

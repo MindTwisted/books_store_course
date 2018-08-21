@@ -146,7 +146,7 @@ $builderMySQL->raw(
                           ON DELETE SET NULL,
                     FOREIGN KEY (order_id)
                           REFERENCES {$prefix}orders (id)
-                          ON DELETE SET NULL
+                          ON DELETE CASCADE
               )"
 );
 

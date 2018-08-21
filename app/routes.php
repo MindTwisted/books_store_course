@@ -293,12 +293,41 @@ Router::add('cart.delete', [
 ]);
 
 // Orders routes
+Router::add('orders.index', [
+    'url' => '/api/orders',
+    'method' => 'GET',
+    'controller' => ['app\controllers\OrdersController', 'index'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('orders.show', [
+    'url' => '/api/orders/:id',
+    'method' => 'GET',
+    'controller' => ['app\controllers\OrdersController', 'show'],
+    'filters' => [
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:orders:id'
+    ]
+]);
+
 Router::add('orders.store', [
     'url' => '/api/orders',
     'method' => 'POST',
     'controller' => ['app\controllers\OrdersController', 'store'],
     'filters' => [
         'permission' => 'isAuth'
+    ]
+]);
+
+Router::add('orders.delete', [
+    'url' => '/api/orders/:id',
+    'method' => 'DELETE',
+    'controller' => ['app\controllers\OrdersController', 'delete'],
+    'filters' => [
+        'permission' => 'isAdmin',
+        'paramValidation' => 'exists:orders:id'
     ]
 ]);
 
