@@ -42,12 +42,10 @@ class GenresModelTest extends TestCase
     public function testGetAllGenres()
     {
         $genres = self::$genresModel->getAllGenres();
+        $genre = $genres[0];
 
-        foreach ($genres as $genre)
-        {
-            $this->assertArrayHasKey('name', $genre);
-            $this->assertArrayHasKey('id', $genre);
-        }
+        $this->assertArrayHasKey('name', $genre);
+        $this->assertArrayHasKey('id', $genre);
     }
 
     public function testGetGenreById()

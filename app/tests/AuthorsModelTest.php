@@ -42,12 +42,10 @@ class AuthorsModelTest extends TestCase
     public function testGetAllAuthors()
     {
         $authors = self::$authorsModel->getAllAuthors();
+        $author = $authors[0];
 
-        foreach ($authors as $author)
-        {
-            $this->assertArrayHasKey('name', $author);
-            $this->assertArrayHasKey('id', $author);
-        }
+        $this->assertArrayHasKey('name', $author);
+        $this->assertArrayHasKey('id', $author);
     }
 
     public function testGetAuthorById()
