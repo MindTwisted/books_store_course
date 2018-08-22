@@ -77,11 +77,13 @@ class UsersController
 
     public function update($id)
     {
+        $maxDiscount = MAX_DISCOUNT;
+
         $validator = Validator::make([
             'name' => "required|minLength:6",
             'email' => "required|email|unique:users:email:$id",
             'password' => "required|minLength:6",
-            'discount' => "numeric"
+            'discount' => "numeric|min:0|max:$maxDiscount"
         ]);
 
         if ($validator->fails())

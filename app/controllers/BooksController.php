@@ -20,11 +20,11 @@ class BooksController
 
     public function index()
     {
-        $author = Input::get('author');
-        $genre = Input::get('genre');
+        $authorId = Input::get('author_id');
+        $genreId = Input::get('genre_id');
         $title = Input::get('title');
 
-        $books = $this->booksModel->getAllBooks($author, $genre, $title);
+        $books = $this->booksModel->getAllBooks($authorId, $genreId, $title);
 
         return View::render([
             'data' => $books
@@ -42,11 +42,13 @@ class BooksController
 
     public function store()
     {
+        $maxDiscount = MAX_DISCOUNT;
+
         $validator = Validator::make([
             'title' => "required|unique:books:title|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
-            'discount' => "required|numeric|min:0"
+            'discount' => "required|numeric|min:0|max:$maxDiscount"
         ]);
 
         if ($validator->fails())
@@ -144,11 +146,13 @@ class BooksController
 
     public function update($id)
     {
+        $maxDiscount = MAX_DISCOUNT;
+
         $validator = Validator::make([
             'title' => "required|unique:books:title:$id|alpha_dash",
             'description' => "required|minLength:20",
             'price' => "required|numeric",
-            'discount' => "required|numeric|min:0"
+            'discount' => "required|numeric|min:0|max:$maxDiscount"
         ]);
 
         if ($validator->fails())

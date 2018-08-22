@@ -23,18 +23,49 @@ class OrdersController
 
     public function index()
     {
+        $sortRules = [];
+
+        if ($sortBy = Input::get('sort_by'))
+        {
+            $sortBy = explode(',', $sortBy);
+            
+            $availableSortRules = ['created_at', 'total_price', 'total_discount'];
+            $availableSortOrders = ['asc', 'desc'];
+            
+            foreach ($sortBy as $sort)
+            {
+                $sort = explode(':', $sort);
+
+                if (count($sort) !== 2)
+                {
+                    continue;
+                }
+
+                $key = strtolower(trim($sort[0]));
+                $value = strtolower(trim($sort[1]));
+                $value = in_array($value, $availableSortOrders) ? $value : 'asc';
+
+                if (!in_array($key, $availableSortRules))
+                {
+                    continue;
+                }
+
+                $sortRules[] = [$key, strtoupper($value)];
+            }
+        }
+
         $user = Auth::user();
 
         if ('admin' !== $user['role'])
         {
-            $orders = $this->ordersModel->getOrders(null, $user['id']);
+            $orders = $this->ordersModel->getOrders(null, $user['id'], $sortRules);
 
             return View::render([
                 'data' => $orders
             ]);
         }
 
-        $orders = $this->ordersModel->getOrders();
+        $orders = $this->ordersModel->getOrders(null, null, $sortRules);
 
         return View::render([
             'data' => $orders

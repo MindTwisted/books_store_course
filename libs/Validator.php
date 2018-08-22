@@ -28,6 +28,10 @@ class Validator
             'method' => 'checkMin',
             'message' => 'This field requires bigger numeric value.',
         ],
+        "/^max:([0-9]+)$/" => [
+            'method' => 'checkMax',
+            'message' => 'This field requires smaller numeric value.',
+        ],
         "/^minLength:([0-9]+)$/" => [
             'method' => 'checkMinLength',
             'message' => 'This field requires longer string.',
@@ -150,7 +154,32 @@ class Validator
         }
 
         return is_numeric($field) && +$field >= +$min;
+    }
 
+    private static function checkMax($field, $max)
+    {
+        if (empty($field) && $field !== '0')
+        {
+            return true;
+        }
+
+        if (is_array($field)) 
+        {
+            $isValid = true;
+
+            foreach ($field as $row) 
+            {
+                if (!is_numeric($row) || !(+$row <= +$max)) 
+                {
+                    $isValid = false;
+                }
+
+            }
+
+            return $isValid;
+        }
+
+        return is_numeric($field) && +$field <= +$max;
     }
 
     private static function checkMinLength($field, $minLength)

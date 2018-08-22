@@ -4,18 +4,22 @@ namespace app\models;
 
 class OrdersModel extends Model
 {
-    public function getOrders($orderId = null, $userId = null)
+    public function getOrders($orderId = null, $userId = null, $sortRules = [])
     {
         $dbPrefix = self::$dbPrefix;
         $separator = '---';
 
         $whereClause = [];
-        $whereClause[] = null !== $orderId ?
-            ["{$dbPrefix}orders.id", '=', $orderId] :
-            ['1', '=', '1'];
-        $whereClause[] = null !== $userId ?
-            ["{$dbPrefix}orders.user_id", '=', $userId] :
-            ['1', '=', '1'];
+
+        if (null !== $orderId)
+        {
+            $whereClause[] = ["{$dbPrefix}orders.id", '=', $orderId];
+        }
+
+        if (null !== $userId)
+        {
+            $whereClause[] = ["{$dbPrefix}orders.user_id", '=', $userId];
+        }
 
         $orders = self::$builder->table("{$dbPrefix}orders")
                         ->join(
@@ -40,12 +44,21 @@ class OrdersModel extends Model
                             "GROUP_CONCAT(DISTINCT {$dbPrefix}users.name, '$separator', email) AS user",
                             "GROUP_CONCAT(DISTINCT book_id, '$separator', book_title, '$separator', book_count, '$separator', book_price, '$separator', book_discount) AS books"
                         ])
-                        ->where(['1', '=', '1'])
-                        ->andWhere(...$whereClause)
-                        ->orderBy(['created_at', 'DESC'])
-                        ->groupBy(['id'])
-                        ->select()
-                        ->run();
+                        ->where(['1', '=', '1']);
+        
+        if (count($whereClause) > 0)
+        {
+            $orders = $orders->andWhere(...$whereClause);
+        }
+
+        if (count($sortRules) > 0)
+        {
+            $orders = $orders->orderBy(...$sortRules);
+        }
+
+        $orders = $orders->groupBy(['id'])
+                         ->select()
+                         ->run();
 
         $orders = array_map(function($order) use ($separator) {
             $user = explode($separator, $order['user']);

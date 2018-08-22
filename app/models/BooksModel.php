@@ -6,7 +6,7 @@ use libs\File;
 
 class BooksModel extends Model
 {
-    public function getAllBooks($author = null, $genre = null, $title = null)
+    public function getAllBooks($authorId = null, $genreId = null, $title = null)
     {
         $dbPrefix = self::$dbPrefix;
 
@@ -33,16 +33,16 @@ class BooksModel extends Model
             WHERE 1=1
         ";
 
-        if ($author && strlen($author) > 0)
+        if ($authorId && strlen($authorId) > 0)
         {
             $sqlQuery .= " AND {$dbPrefix}authors.id = ?";
-            $executeParams[] = $author;
+            $executeParams[] = $authorId;
         }
 
-        if ($genre && strlen($genre) > 0)
+        if ($genreId && strlen($genreId) > 0)
         {
             $sqlQuery .= " AND {$dbPrefix}genres.id = ?";
-            $executeParams[] = $genre;
+            $executeParams[] = $genreId;
         }
 
         if ($title && strlen($title) > 0)
