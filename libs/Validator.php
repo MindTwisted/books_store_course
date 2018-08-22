@@ -14,49 +14,104 @@ class Validator
     private static $rules = [
         "/^required$/" => [
             'method' => 'checkRequired',
-            'message' => 'This field is required.',
+            'message' => 'requiredMessage',
         ],
         "/^numeric$/" => [
             'method' => 'checkNumeric',
-            'message' => 'This field requires numeric value.',
+            'message' => 'numericMessage',
         ],
         "/^integer$/" => [
             'method' => 'checkInteger',
-            'message' => 'This field requires integer value.',
+            'message' => 'integerMessage',
         ],
         "/^min:([0-9]+)$/" => [
             'method' => 'checkMin',
-            'message' => 'This field requires bigger numeric value.',
+            'message' => 'minMessage',
         ],
         "/^max:([0-9]+)$/" => [
             'method' => 'checkMax',
-            'message' => 'This field requires smaller numeric value.',
+            'message' => 'maxMessage',
         ],
         "/^minLength:([0-9]+)$/" => [
             'method' => 'checkMinLength',
-            'message' => 'This field requires longer string.',
+            'message' => 'minLengthMessage',
         ],
         "/^email$/" => [
             'method' => 'checkEmail',
-            'message' => 'This field must be a valid email address.',
+            'message' => 'emailMessage',
         ],
         "/^unique:([a-zA-Z0-9\-\_]+):([a-zA-Z0-9\-\_]+):*([a-zA-Z0-9\-\_]*)$/" => [
             'method' => 'checkUnique',
-            'message' => 'This value is already exists.',
+            'message' => 'uniqueMessage',
         ],
         "/^exists:([a-zA-Z0-9\-\_]+):([a-zA-Z0-9\-\_]+)$/" => [
             'method' => 'checkExists',
-            'message' => 'This value doesn\'t exists in database.',
+            'message' => 'existsMessage',
         ],
         "/^included:\(([a-zA-Z0-9\-\_\,\s]+)\)$/" => [
             'method' => 'checkIncluded',
-            'message' => 'This value doesn\'t included in available list of values.',
+            'message' => 'includedMessage',
         ],
         "/^alpha_dash$/" => [
             'method' => 'checkAlphaDash',
-            'message' => 'This field requires only alphanumeric characters with dashes, underscores and spaces.',
+            'message' => 'alphaDashMessage',
         ],
     ];
+
+    private static function requiredMessage()
+    {
+        return "This field is required.";
+    }
+
+    private static function numericMessage()
+    {
+        return "This field requires numeric value.";
+    }
+
+    private static function integerMessage()
+    {
+        return "This field requires integer value.";
+    }
+
+    private static function minMessage($min)
+    {
+        return "This field requires numeric value >= $min.";
+    }
+
+    private static function maxMessage($max)
+    {
+        return "This field requires numeric value <= $max.";
+    }
+
+    private static function minLengthMessage($length)
+    {
+        return "This field requires string longer than $length characters.";
+    }
+
+    private static function emailMessage()
+    {
+        return "This field must be a valid email address.";
+    }
+
+    private static function uniqueMessage()
+    {
+        return "This value is already exists in database.";
+    }
+
+    private static function existsMessage()
+    {
+        return "This value doesn't exists in database.";
+    }
+
+    private static function includedMessage($list)
+    {
+        return "This value doesn't included in available list of values: $list.";
+    }
+
+    private static function alphaDashMessage()
+    {
+        return "This field requires only alphanumeric characters with dashes, underscores and spaces.";
+    }
 
     private static function checkRequired($field)
     {
@@ -345,7 +400,7 @@ class Validator
 
                         if (!self::$methodName($fieldValue, $first, $second, $third)) 
                         {
-                            $messages[] = $message;
+                            $messages[] = self::$message($first);
                         }
                     }
                 }

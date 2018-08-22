@@ -10,5 +10,5 @@ require_once '../app/routes.php';
 
 /*
     TODO:
-    2) add unit tests;
+    1) add unit tests;
 */
