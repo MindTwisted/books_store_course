@@ -6,7 +6,7 @@ class Input
 {
     private static $input = [];
 
-    private static function collectInput()
+    public static function collectInput()
     {
         $method = $_SERVER['REQUEST_METHOD'];
 
@@ -44,22 +44,16 @@ class Input
 
     public static function get($field)
     {
-        self::collectInput();
-
         return isset(self::$input[$field]) ? self::$input[$field] : null;
     }
 
     public static function all()
     {
-        self::collectInput();
-
         return self::$input;
     }
 
     public static function only(array $fields)
     {
-        self::collectInput();
-
         return array_filter(self::$input, function($input) use ($fields) {
             return in_array($input, $fields);
         }, ARRAY_FILTER_USE_KEY);

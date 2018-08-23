@@ -3,6 +3,7 @@
 use libs\Validator;
 use libs\Auth;
 use libs\View;
+use libs\Input;
 use libs\QueryBuilder\src\QueryBuilder;
 use app\models\Model;
 
@@ -14,6 +15,8 @@ $queryBuilder = new QueryBuilder(
     DB_USER,
     DB_PASSWORD
 );
+
+Input::collectInput();
 
 Model::setDbPrefix(DB_TABLE_PREFIX);
 Model::setBuilder($queryBuilder);

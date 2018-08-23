@@ -10,11 +10,18 @@ require_once 'libs/QueryBuilder/src/traits/Validators.php';
 require_once 'libs/QueryBuilder/src/QueryBuilder.php';
 require_once 'libs/Env.php';
 
+use \libs\Env;
+
+Env::setEnvFromFile('./.env');
+
+require_once 'app/config/config.php';
+
 use \PHPUnit\Framework\TestCase;
 use \app\models\Model;
 use \app\models\BooksModel;
 use \libs\QueryBuilder\src\QueryBuilder;
-use \libs\Env;
+
+
 
 class BooksModelTest extends TestCase
 {
@@ -22,19 +29,17 @@ class BooksModelTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        Env::setEnvFromFile('./.env');
-
         $queryBuilder = new QueryBuilder(
             'mysql',
-            Env::get('DB_HOST'),
-            Env::get('DB_PORT'),
-            Env::get('DB_DATABASE'),
-            Env::get('DB_USER'),
-            Env::get('DB_PASSWORD')
+            DB_HOST,
+            DB_PORT,
+            DB_DATABASE,
+            DB_USER,
+            DB_PASSWORD
         );
 
         Model::setBuilder($queryBuilder);
-        Model::setDbPrefix(Env::get('DB_TABLE_PREFIX'));
+        Model::setDbPrefix(DB_TABLE_PREFIX);
 
         self::$booksModel = new BooksModel();
     }
