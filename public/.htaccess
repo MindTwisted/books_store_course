@@ -2,6 +2,8 @@
   Allow from all
 </Limit>
 
+Header set Access-Control-Allow-Origin "*"
+
 RewriteEngine On 
 
 # RewriteBase /~user5/books-store-server/
