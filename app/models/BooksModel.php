@@ -9,6 +9,7 @@ class BooksModel extends Model
     public function getAllBooks($authorId = null, $genreId = null, $title = null)
     {
         $dbPrefix = self::$dbPrefix;
+        $separator = '---';
 
         $executeParams = [];
         $sqlQuery = "
@@ -19,8 +20,8 @@ class BooksModel extends Model
                 {$dbPrefix}books.image_url,
                 {$dbPrefix}books.price,
                 {$dbPrefix}books.discount,
-                GROUP_CONCAT(DISTINCT {$dbPrefix}authors.name) AS authors,
-                GROUP_CONCAT(DISTINCT {$dbPrefix}genres.name) AS genres
+                GROUP_CONCAT(DISTINCT {$dbPrefix}authors.id, '$separator', {$dbPrefix}authors.name) AS authors,
+                GROUP_CONCAT(DISTINCT {$dbPrefix}genres.id, '$separator', {$dbPrefix}genres.name) AS genres
             FROM {$dbPrefix}books
             LEFT JOIN {$dbPrefix}book_author 
                 ON {$dbPrefix}books.id = {$dbPrefix}book_author.book_id
@@ -55,9 +56,26 @@ class BooksModel extends Model
 
         $books = self::$builder->raw($sqlQuery, $executeParams);
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
-        $books = array_map(function($book) {
+        $books = array_map(function($book) use ($separator) {
             $book['authors'] = explode(',', $book['authors']);
+            $book['authors'] = array_map(function($author) use ($separator) {
+                $author = explode($separator, $author);
+
+                return [
+                    'id' => $author[0],
+                    'name' => $author[1]
+                ];
+            }, $book['authors']);
+
             $book['genres'] = explode(',', $book['genres']);
+            $book['genres'] = array_map(function($genre) use ($separator) {
+                $genre = explode($separator, $genre);
+                
+                return [
+                    'id' => $genre[0],
+                    'name' => $genre[1]
+                ];
+            }, $book['genres']);
 
             return $book;
         }, $books);
