@@ -8,7 +8,8 @@ class Input
 
     public static function collectInput()
     {
-        $method = $_SERVER['REQUEST_METHOD'];
+        $method = isset($_SERVER['REQUEST_METHOD']) ?
+            $_SERVER['REQUEST_METHOD'] : null;
 
         foreach ($_GET as $key => $value)
         {
