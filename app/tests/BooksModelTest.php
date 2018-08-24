@@ -46,7 +46,7 @@ class BooksModelTest extends TestCase
 
     public function testGetAllBooks()
     {
-        $books = self::$booksModel->getAllBooks();
+        $books = self::$booksModel->getBooks();
         $book = $books[0];
 
         $this->assertTrue(count($books) > 0);
@@ -62,7 +62,7 @@ class BooksModelTest extends TestCase
 
     public function testGetBookById()
     {
-        $book = self::$booksModel->getBookById(1);
+        $book = self::$booksModel->getBooks(1);
 
         $this->assertCount(1, $book);
 
@@ -80,7 +80,7 @@ class BooksModelTest extends TestCase
 
     public function testAddBook()
     {
-        $initialBooks = self::$booksModel->getAllBooks();
+        $initialBooks = self::$booksModel->getBooks();
 
         $newBookId = self::$booksModel->addBook(
             'new book title', 
@@ -89,7 +89,7 @@ class BooksModelTest extends TestCase
             '40'
         );
 
-        $booksWithNewBook = self::$booksModel->getAllBooks();
+        $booksWithNewBook = self::$booksModel->getBooks();
 
         $this->assertTrue($newBookId !== null);
         $this->assertTrue(count($initialBooks) + 1 === count($booksWithNewBook));
@@ -97,7 +97,7 @@ class BooksModelTest extends TestCase
 
     public function testUpdateBook()
     {
-        $books = self::$booksModel->getAllBooks();
+        $books = self::$booksModel->getBooks();
         $lastBookId = $books[count($books) - 1]['id'];
 
         self::$booksModel->updateBook(
@@ -108,7 +108,7 @@ class BooksModelTest extends TestCase
             '10'
         );
 
-        $updatedBook = self::$booksModel->getBookById($lastBookId);
+        $updatedBook = self::$booksModel->getBooks($lastBookId);
 
         $this->assertArraySubset(
             [
@@ -123,16 +123,16 @@ class BooksModelTest extends TestCase
 
     public function testDeleteBook()
     {
-        $books = self::$booksModel->getAllBooks();
+        $books = self::$booksModel->getBooks();
         $lastBookId = $books[count($books) - 1]['id'];
 
         self::$booksModel->deleteBook($lastBookId);
 
-        $booksAfterDelete = self::$booksModel->getAllBooks();
+        $booksAfterDelete = self::$booksModel->getBooks();
 
         $this->assertTrue(count($booksAfterDelete) + 1 === count($books));
 
-        $deletedBook = self::$booksModel->getBookById($lastBookId);
+        $deletedBook = self::$booksModel->getBooks($lastBookId);
 
         $this->assertCount(0, $deletedBook);
     }

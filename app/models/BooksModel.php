@@ -6,11 +6,11 @@ use libs\File;
 
 class BooksModel extends Model
 {
-    public function getAllBooks($authorId = null, $genreId = null, $title = null)
+    public function getBooks($bookId = null, $authorId = null, $genreId = null, $title = null)
     {
         $dbPrefix = self::$dbPrefix;
         $separator = '---';
-
+        
         $executeParams = [];
         $sqlQuery = "
             SELECT
@@ -33,6 +33,12 @@ class BooksModel extends Model
                 ON {$dbPrefix}genres.id = {$dbPrefix}book_genre.genre_id
             WHERE 1=1
         ";
+
+        if ($bookId && strlen($bookId) > 0)
+        {
+            $sqlQuery .= " AND {$dbPrefix}books.id = ?";
+            $executeParams[] = $bookId;
+        }
 
         if ($authorId && strlen($authorId) > 0)
         {
@@ -57,67 +63,40 @@ class BooksModel extends Model
         $books = self::$builder->raw($sqlQuery, $executeParams);
         $books = $books->fetchAll(\PDO::FETCH_ASSOC);
         $books = array_map(function($book) use ($separator) {
-            $book['authors'] = explode(',', $book['authors']);
-            $book['authors'] = array_map(function($author) use ($separator) {
-                $author = explode($separator, $author);
+            
+            if ($book['authors'])
+            {
+                $book['authors'] = explode(',', $book['authors']);
+                $book['authors'] = array_map(function($author) use ($separator) {
+                    $author = explode($separator, $author);
 
-                return [
-                    'id' => $author[0],
-                    'name' => $author[1]
-                ];
-            }, $book['authors']);
+                    return [
+                        'id' => $author[0],
+                        'name' => $author[1]
+                    ];
+                }, $book['authors']);
+            }
+            else
+            {
+                $book['authors'] = [];
+            }
 
-            $book['genres'] = explode(',', $book['genres']);
-            $book['genres'] = array_map(function($genre) use ($separator) {
-                $genre = explode($separator, $genre);
-                
-                return [
-                    'id' => $genre[0],
-                    'name' => $genre[1]
-                ];
-            }, $book['genres']);
-
-            return $book;
-        }, $books);
-
-        return $books;
-    }
-
-    public function getBookById($id)
-    {
-        $dbPrefix = self::$dbPrefix;
-
-        $executeParams = [];
-        $sqlQuery = "
-            SELECT
-                {$dbPrefix}books.id,
-                {$dbPrefix}books.title,
-                {$dbPrefix}books.description,
-                {$dbPrefix}books.image_url,
-                {$dbPrefix}books.price,
-                {$dbPrefix}books.discount,
-                GROUP_CONCAT(DISTINCT {$dbPrefix}authors.name) AS authors,
-                GROUP_CONCAT(DISTINCT {$dbPrefix}genres.name) AS genres
-            FROM {$dbPrefix}books
-            LEFT JOIN {$dbPrefix}book_author 
-                ON {$dbPrefix}books.id = {$dbPrefix}book_author.book_id
-            LEFT JOIN {$dbPrefix}authors
-                ON {$dbPrefix}authors.id = {$dbPrefix}book_author.author_id
-            LEFT JOIN {$dbPrefix}book_genre 
-                ON {$dbPrefix}books.id = {$dbPrefix}book_genre.book_id
-            LEFT JOIN {$dbPrefix}genres
-                ON {$dbPrefix}genres.id = {$dbPrefix}book_genre.genre_id
-            WHERE {$dbPrefix}books.id = ?
-            GROUP BY {$dbPrefix}books.id
-        ";
-        
-        $executeParams[] = $id;
-
-        $books = self::$builder->raw($sqlQuery, $executeParams);
-        $books = $books->fetchAll(\PDO::FETCH_ASSOC);
-        $books = array_map(function($book) {
-            $book['authors'] = explode(',', $book['authors']);
-            $book['genres'] = explode(',', $book['genres']);
+            if ($book['genres'])
+            {
+                $book['genres'] = explode(',', $book['genres']);
+                $book['genres'] = array_map(function($genre) use ($separator) {
+                    $genre = explode($separator, $genre);
+                    
+                    return [
+                        'id' => $genre[0],
+                        'name' => $genre[1]
+                    ];
+                }, $book['genres']);
+            }
+            else
+            {
+                $book['genres'] = [];
+            }
 
             return $book;
         }, $books);

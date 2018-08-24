@@ -23,8 +23,8 @@ class BooksController
         $authorId = Input::get('author_id');
         $genreId = Input::get('genre_id');
         $title = Input::get('title');
-
-        $books = $this->booksModel->getAllBooks($authorId, $genreId, $title);
+        
+        $books = $this->booksModel->getBooks(null, $authorId, $genreId, $title);
 
         return View::render([
             'data' => $books
@@ -33,7 +33,7 @@ class BooksController
 
     public function show($id)
     {
-        $book = $this->booksModel->getBookById($id);
+        $book = $this->booksModel->getBooks($id);
 
         return View::render([
             'data' => $book
@@ -120,7 +120,7 @@ class BooksController
 
     public function storeImage($id)
     {
-        $book = $this->booksModel->getBookById($id);
+        $book = $this->booksModel->getBooks($id);
         $image = File::get('image');
 
         if (!$image->isExistsInInput())
