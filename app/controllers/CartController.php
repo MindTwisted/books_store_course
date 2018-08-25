@@ -49,9 +49,9 @@ class CartController
         $bookId = Input::get('book_id');
         $count = Input::get('count');
 
-        $isAdded = $this->cartModel->addToCart($user['id'], $bookId, $count);
+        $cartId = $this->cartModel->addToCart($user['id'], $bookId, $count);
 
-        if (!$isAdded)
+        if (!$cartId)
         {
             View::render([
                 'text' => "Book with id '$bookId' is already in cart."
@@ -59,7 +59,8 @@ class CartController
         }
 
         return View::render([
-            'text' => "Book with id '$bookId' was successfully added to cart."
+            'text' => "Book with id '$bookId' was successfully added to cart.",
+            'data' => ['id' => $cartId]
         ]);
     }
 

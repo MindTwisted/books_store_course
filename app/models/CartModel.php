@@ -42,8 +42,6 @@ class CartModel extends Model
                     ->run();
 
         $cart = array_map(function($item) use ($separator) {
-            unset($item['id']);
-
             $item['book'] = explode($separator, $item['book']);
 
             $book = [
@@ -74,13 +72,11 @@ class CartModel extends Model
             return false;
         }
 
-        self::$builder->table("{$dbPrefix}cart")
-            ->fields(['user_id', 'book_id', 'count'])
-            ->values([$userId, $bookId, $count])
-            ->insert()
-            ->run();
-
-        return true;
+        return self::$builder->table("{$dbPrefix}cart")
+                    ->fields(['user_id', 'book_id', 'count'])
+                    ->values([$userId, $bookId, $count])
+                    ->insert()
+                    ->run();
     }
 
     public function updateInCart($userId, $bookId, $count)
