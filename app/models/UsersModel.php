@@ -41,17 +41,24 @@ class UsersModel extends Model
             ->run();
     }
 
-    public function updateUser($id, $name, $email, $password, $discount = null)
+    public function updateUser($id, $name, $email, $password = null, $discount = null)
     {
         $dbPrefix = self::$dbPrefix;
 
-        $fields = null === $discount ?
-            ['name', 'email', 'password'] :
-            ['name', 'email', 'password', 'discount'];
+        $fields = ['name', 'email'];
+        $values = [$name, $email];
 
-        $values = null === $discount ?
-            [$name, $email, password_hash($password, PASSWORD_BCRYPT)] :
-            [$name, $email, password_hash($password, PASSWORD_BCRYPT), $discount];
+        if (null !== $password)
+        {
+            $fields[] = 'password';
+            $values[] = password_hash($password, PASSWORD_BCRYPT);
+        }
+
+        if (null !== $discount)
+        {
+            $fields[] = 'discount';
+            $values[] = $discount;
+        }
 
         self::$builder->table("{$dbPrefix}users")
             ->fields($fields)

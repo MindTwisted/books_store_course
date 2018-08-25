@@ -351,6 +351,16 @@ Router::add('orders.delete', [
     ]
 ]);
 
+// PaymentTypes routes
+Router::add('paymentTypes.index', [
+    'url' => '/api/payment-types',
+    'method' => 'GET',
+    'controller' => ['app\controllers\PaymentTypesController', 'index'],
+    'filters' => [
+        'permission' => 'isAuth'
+    ]
+]);
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestUrl = '/' . implode('/', array_slice(explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]), 3));
 

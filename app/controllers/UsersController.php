@@ -82,7 +82,6 @@ class UsersController
         $validator = Validator::make([
             'name' => "required|minLength:6",
             'email' => "required|email|unique:users:email:$id",
-            'password' => "required|minLength:6",
             'discount' => "numeric|min:0|max:$maxDiscount"
         ]);
 
@@ -96,10 +95,9 @@ class UsersController
 
         $name = Input::get('name');
         $email = Input::get('email');
-        $password = Input::get('password');
         $discount = Input::get('discount');
 
-        $this->usersModel->updateUser($id, $name, $email, $password, $discount);
+        $this->usersModel->updateUser($id, $name, $email, null, $discount);
 
         return View::render([
             'text' => "User '$name' was successfully updated."
