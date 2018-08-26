@@ -41,7 +41,7 @@ class OrdersModel extends Model
                             'total_discount',
                             'total_price',
                             'created_at',
-                            "GROUP_CONCAT(DISTINCT {$dbPrefix}users.name, '$separator', email) AS user",
+                            "GROUP_CONCAT(DISTINCT {$dbPrefix}users.id, '$separator', {$dbPrefix}users.name, '$separator', email) AS user",
                             "GROUP_CONCAT(DISTINCT book_id, '$separator', book_title, '$separator', book_count, '$separator', book_price, '$separator', book_discount) AS books"
                         ])
                         ->where(['1', '=', '1']);
@@ -63,8 +63,9 @@ class OrdersModel extends Model
         $orders = array_map(function($order) use ($separator) {
             $user = explode($separator, $order['user']);
             $user = [
-                'name' => $user[0],
-                'email' => $user[1]
+                'id' => $user[0],
+                'name' => $user[1],
+                'email' => $user[2]
             ];
 
             $books = explode(',', $order['books']);
