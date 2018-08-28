@@ -34,7 +34,7 @@ class CartModel extends Model
                     ->fields([
                         $cartTable.'.id',
                         'count',
-                        "GROUP_CONCAT({$booksTable}.id, '$separator', title, '$separator', description, '$separator', image_url, '$separator', price, '$separator', discount) AS book"
+                        "GROUP_CONCAT({$booksTable}.id, '$separator', title, '$separator', description, '$separator', price, '$separator', discount) AS book"
                     ])
                     ->where(['user_id', '=', $userId])
                     ->groupBy([$cartTable.'.id', 'count'])
@@ -48,9 +48,8 @@ class CartModel extends Model
                 'id' => $item['book'][0],
                 'title' => $item['book'][1],
                 'description' => $item['book'][2],
-                'image_url' => $item['book'][3],
-                'price' => $item['book'][4],
-                'discount' => $item['book'][5]
+                'price' => $item['book'][3],
+                'discount' => $item['book'][4]
             ];
 
             $item['book'] = $book;

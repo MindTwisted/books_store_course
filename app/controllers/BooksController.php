@@ -47,7 +47,7 @@ class BooksController
         $validator = Validator::make([
             'title' => "required|unique:books:title|alpha_dash",
             'description' => "required|minLength:20",
-            'price' => "required|numeric",
+            'price' => "required|numeric|min:1",
             'discount' => "required|numeric|min:0|max:$maxDiscount"
         ]);
 

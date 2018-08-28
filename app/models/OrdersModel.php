@@ -42,7 +42,7 @@ class OrdersModel extends Model
                             'total_price',
                             'created_at',
                             "GROUP_CONCAT(DISTINCT {$dbPrefix}users.id, '$separator', {$dbPrefix}users.name, '$separator', email) AS user",
-                            "GROUP_CONCAT(DISTINCT book_id, '$separator', book_title, '$separator', book_count, '$separator', book_price, '$separator', book_discount) AS books"
+                            "GROUP_CONCAT(DISTINCT IFNULL(book_id, 'deleted'), '$separator', book_title, '$separator', book_count, '$separator', book_price, '$separator', book_discount) AS books"
                         ])
                         ->where(['1', '=', '1']);
         
