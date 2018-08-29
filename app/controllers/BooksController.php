@@ -137,10 +137,11 @@ class BooksController
             ], 422);
         }
 
-        $this->booksModel->addImage($book[0], $image);
+        $imageUrl = $this->booksModel->addImage($book[0], $image);
 
         return View::render([
-            'text' => "Image for book '{$book[0]['title']}' was successfully added."
+            'text' => "Image for book '{$book[0]['title']}' was successfully added.",
+            'data' => ['imageUrl' => $imageUrl]
         ]);
     }
 

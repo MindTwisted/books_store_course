@@ -189,6 +189,8 @@ class BooksModel extends Model
             ->where(['id', '=', $book['id']])
             ->update()
             ->run();
+
+        return $storageFilePath;
     }
 
     public function updateBook($id, $title, $description, $price, $discount)
