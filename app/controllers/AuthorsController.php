@@ -39,7 +39,7 @@ class AuthorsController
 
     public function showBooks($id)
     {
-        $books = $this->booksModel->getAllBooks($id);
+        $books = $this->booksModel->getBooks(null, $id);
 
         return View::render([
             'data' => $books

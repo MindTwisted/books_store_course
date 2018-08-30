@@ -39,7 +39,7 @@ class GenresController
 
     public function showBooks($id)
     {
-        $books = $this->booksModel->getAllBooks(null, $id);
+        $books = $this->booksModel->getBooks(null, null, $id);
 
         return View::render([
             'data' => $books
