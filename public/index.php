@@ -1,7 +1,5 @@
 <?php
 
-sleep(1);
-
 require_once '../bootstrap/env.php';
 require_once '../app/config/config.php';
 require_once '../app/helpers.php';
